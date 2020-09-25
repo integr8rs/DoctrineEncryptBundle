@@ -1,18 +1,18 @@
 <?php
 
-
 namespace Ambta\DoctrineEncryptBundle\Tests\Functional\fixtures\Entity;
-
 
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity()
+ * @ORM\InheritanceType("SINGLE_TABLE")
+ * @ORM\DiscriminatorColumn(name="type", type="string")
+ * @ORM\DiscriminatorMap({"car" = "VehicleCar","bike" = "VehicleBicycle"})
  *
  */
-class Owner
+abstract class AbstractVehicle
 {
-
     /**
      * @var int
      * @ORM\Id
@@ -33,23 +33,25 @@ class Owner
     private $notSecret;
 
     /**
-     * @ORM\OneToOne(
-     *     targetEntity="Ambta\DoctrineEncryptBundle\Tests\Functional\fixtures\Entity\CascadeTarget",
-     *     cascade={"persist"})
+     * @return int
      */
-    private $cascaded;
-
-    public function getId()
+    public function getId(): int
     {
         return $this->id;
     }
 
+    /**
+     * @return mixed
+     */
     public function getSecret()
     {
         return $this->secret;
     }
 
-    public function setSecret($secret)
+    /**
+     * @param mixed $secret
+     */
+    public function setSecret($secret): void
     {
         $this->secret = $secret;
     }
@@ -64,26 +66,11 @@ class Owner
 
     /**
      * @param mixed $notSecret
+     * @return $this
      */
-    public function setNotSecret($notSecret)
+    public function setNotSecret($notSecret): self
     {
         $this->notSecret = $notSecret;
+        return $this;
     }
-
-    /**
-     * @return mixed
-     */
-    public function getCascaded()
-    {
-        return $this->cascaded;
-    }
-
-    /**
-     * @param mixed $cascaded
-     */
-    public function setCascaded($cascaded)
-    {
-        $this->cascaded = $cascaded;
-    }
-
 }

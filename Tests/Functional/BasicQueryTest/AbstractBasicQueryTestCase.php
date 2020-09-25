@@ -5,6 +5,7 @@ namespace Ambta\DoctrineEncryptBundle\Tests\Functional\BasicQueryTest;
 use Ambta\DoctrineEncryptBundle\Subscribers\DoctrineEncryptSubscriber;
 use Ambta\DoctrineEncryptBundle\Tests\Functional\AbstractFunctionalTestCase;
 use Ambta\DoctrineEncryptBundle\Tests\Functional\fixtures\Entity\CascadeTarget;
+use Ambta\DoctrineEncryptBundle\Tests\Functional\fixtures\Entity\VehicleCar;
 
 abstract class AbstractBasicQueryTestCase extends AbstractFunctionalTestCase
 {
@@ -80,5 +81,26 @@ abstract class AbstractBasicQueryTestCase extends AbstractFunctionalTestCase
 
         $this->assertStringEndsWith(DoctrineEncryptSubscriber::ENCRYPTION_MARKER,$passwordData);
         $this->assertStringDoesNotContain('my secret',$passwordData);
+    }
+
+    public function testNoUpdateForChildrenOfAbstractEntities()
+    {
+        $car = new VehicleCar();
+        $car->setSecret('top secret information');
+        $car->setNotSecret('123-test');
+        $this->entityManager->persist($car);
+        $this->entityManager->flush();
+
+        // start transaction, insert, commit
+        $this->assertEquals(3,$this->getCurrentQueryCount());
+
+        // Remove all logged queries
+        $this->resetQueryStack();
+
+        $car->setNotSecret('123-test');
+        $this->entityManager->flush();
+
+        $this->assertNull($this->getLatestUpdateQuery());
+        $this->assertEquals(0,$this->getCurrentQueryCount());
     }
 }
