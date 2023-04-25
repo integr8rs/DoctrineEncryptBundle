@@ -6,4 +6,7 @@ if (!file_exists($file)) {
 }
 
 $autoload = require $file;
-Doctrine\Common\Annotations\AnnotationRegistry::registerLoader([$autoload, 'loadClass']);
+
+if (method_exists(Doctrine\Common\Annotations\AnnotationRegistry::class,'registerLoader')) {
+    Doctrine\Common\Annotations\AnnotationRegistry::registerLoader([$autoload, 'loadClass']);
+}
