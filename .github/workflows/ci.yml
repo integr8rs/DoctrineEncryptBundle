@@ -12,7 +12,7 @@ on:
 jobs:
   static-analysis:
     name: Static Analysis
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-22.04
 
     steps:
       - name: "Checkout code"
@@ -44,7 +44,7 @@ jobs:
 
   tests:
     name: "Tests ${{ matrix.php-version }} ${{ matrix.dependency-versions }}"
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-22.04
     needs: static-analysis
 
     strategy:
