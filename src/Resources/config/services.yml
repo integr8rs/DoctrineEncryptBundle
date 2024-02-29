@@ -25,3 +25,9 @@ services:
             - "@doctrine.orm.entity_manager"
             - "@ambta_doctrine_annotation_reader"
             - "@ambta_doctrine_encrypt.subscriber"
+
+    ambta_doctrine_encrypt.command.generate_secret:
+        class: Ambta\DoctrineEncryptBundle\Command\GenerateSecretCommand
+        tags: ['console.command']
+        arguments:
+            - "%ambta_doctrine_encrypt.encryptor_class_name%"

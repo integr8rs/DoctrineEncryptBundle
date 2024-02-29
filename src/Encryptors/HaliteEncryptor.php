@@ -13,7 +13,7 @@ use ParagonIE\Halite\Symmetric\Crypto;
  * @author Michael de Groot <specamps@gmail.com>
  */
 
-class HaliteEncryptor implements EncryptorInterface
+class HaliteEncryptor implements EncryptorInterface, SecretGeneratorInterface
 {
     /** @var EncryptionKey|null  */
     private $encryptionKey = null;
@@ -53,8 +53,8 @@ class HaliteEncryptor implements EncryptorInterface
         return $this->encryptionKey;
     }
 
-    public function validateSecret()
+    public static function generateSecret(): HiddenString
     {
-        $this->getKey();
+        return KeyFactory::export(KeyFactory::generateEncryptionKey());
     }
 }

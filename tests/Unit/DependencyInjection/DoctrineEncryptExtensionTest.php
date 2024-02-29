@@ -5,6 +5,8 @@ namespace Ambta\DoctrineEncryptBundle\Tests\Unit\DependencyInjection;
 use Ambta\DoctrineEncryptBundle\DependencyInjection\DoctrineEncryptExtension;
 use Ambta\DoctrineEncryptBundle\Encryptors\DefuseEncryptor;
 use Ambta\DoctrineEncryptBundle\Encryptors\HaliteEncryptor;
+use Ambta\DoctrineEncryptBundle\Exception\UnableToGenerateSecretException;
+use Ambta\DoctrineEncryptBundle\Tests\Unit\DependencyInjection\fixtures\TestEncryptor;
 use ParagonIE\Halite\KeyFactory;
 use ParagonIE\HiddenString\HiddenString;
 use PHPUnit\Framework\TestCase;
@@ -153,6 +155,32 @@ class DoctrineEncryptExtensionTest extends TestCase
         }
     }
 
+    public function testCustomSecretIsCreatedWhenSecretFileDoesNotExistAndSecretCreationIsEnabled(): void
+    {
+        $encryptor = TestEncryptor::class;
+
+        $container = $this->createContainer();
+        $config = [
+            'encryptor_class'          => $encryptor,
+            'secret_directory_path'    => $this->temporaryDirectory,
+            'enable_secret_generation' => true,
+        ];
+        $this->extension->load([$config], $container);
+
+        $secretArgument = $container->getDefinition('ambta_doctrine_encrypt.encryptor')->getArgument(0);
+        if ($secretArgument instanceof Expression) {
+            $actualSecret = $container->resolveServices($secretArgument);
+        } else {
+            $actualSecret = $secretArgument;
+        }
+        $this->assertIsString($actualSecret);
+        $this->assertEquals(TestEncryptor::SECRET,$actualSecret);
+
+        // Verify stored on disk
+        $actualSecretOnDisk = file_get_contents($this->temporaryDirectory.DIRECTORY_SEPARATOR.'.DoctrineEncryptBundle.key');
+        $this->assertEquals($actualSecret,$actualSecretOnDisk);
+    }
+
     public function testSecretIsNotCreatedWhenSecretFileDoesNotExistAndSecretCreationIsNotEnabled(): void
     {
         $container = $this->createContainer();
@@ -162,7 +190,7 @@ class DoctrineEncryptExtensionTest extends TestCase
         ];
         $this->extension->load([$config], $container);
 
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(UnableToGenerateSecretException::class);
         if (method_exists($this,'expectExceptionMessageMatches')) {
             $this->expectExceptionMessageMatches('/DoctrineEncryptBundle: Unable to create secret.*/');
         } elseif(method_exists($this,'expectExceptionMessageRegExp')) {
@@ -170,7 +198,6 @@ class DoctrineEncryptExtensionTest extends TestCase
         } else {
             $this->markAsRisky('Unable to see if the exception matches the actual message');
         }
-
 
         $secretArgument = $container->getDefinition('ambta_doctrine_encrypt.encryptor')->getArgument(0);
         if ($secretArgument instanceof Expression) {

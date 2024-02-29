@@ -48,7 +48,7 @@ class Configuration implements ConfigurationInterface
                     ->defaultValue('%kernel.project_dir%')
                 ->end()
                 ->booleanNode('enable_secret_generation')
-                    ->defaultValue(true)
+                    ->defaultValue(false)
                 ->end()
                 ->scalarNode('secret')
                     ->defaultValue(null)

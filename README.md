@@ -29,7 +29,7 @@ This bundle has updated security by not rolling its own encryption and using ver
 ```yml
 // Config.yml
 ambta_doctrine_encrypt:
-    encryptor_class: Halite
+    encryptor_class: Halite  # Default value
 ```
 
 ### Using [Defuse](https://github.com/defuse/php-encryption)
@@ -44,21 +44,38 @@ ambta_doctrine_encrypt:
     encryptor_class: Defuse
 ```
 
-
-
 ### Secret key
 
-The secret key should be a max 32 byte hexadecimal string (`[0-9a-fA-F]`).
+The current best practice is to inject the secret through an environment variable or by using [a symfony secret](https://symfony.com/doc/current/configuration/secrets.html).
 
-Secret key is generated if there is no key found. This is automatically generated and stored in the folder defined in the configuration
+You can generate a new secret using the GenerateSecretCommand: `bin/console doctrine:encrypt:generate-secret`.  
+
+This will generate a secret if the configured encryptor_class allows secret-generation.
+
+The default encryptors Halite and Defuse allow generating a new secret. When you use a custom encryptor which supports
+generating a secret, the command will be able to generate a secret as well.
 
 ```yml
-// Config.yml
+# config/ambta_doctrine_encrypt.yml
 ambta_doctrine_encrypt:
+    secret: '%env(HALITE_SECRET)%'
+```
+
+#### Automatic secret generation
+Optionally, you can configure the bundle to generate a secret and store it in a default location if no key is found.
+It will be stored in the folder defined in the configuration
+
+```yml
+# config/ambta_doctrine_encrypt.yml
+ambta_doctrine_encrypt:
+    enable_secret_generation: true
     secret_directory_path: '%kernel.project_dir%'   # Default value
 ```
 
-Filename example: `.DefuseEncryptor.key` or `.HaliteEncryptor.key`
+The filenames for the generated key will be:
+* Defuse: `.Defuse.key`
+* Halite: `.Halite.key`
+* Custom encryptor: `.DoctrineEncryptBundle.key`
 
 **Do not forget to add these files to your .gitignore file, you do not want this on your repository!**
 

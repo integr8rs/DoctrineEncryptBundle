@@ -2,11 +2,11 @@
 
 namespace Ambta\DoctrineEncryptBundle\Factories;
 
-use Ambta\DoctrineEncryptBundle\DependencyInjection\DoctrineEncryptExtension;
 use Ambta\DoctrineEncryptBundle\Encryptors\DefuseEncryptor;
 use Ambta\DoctrineEncryptBundle\Encryptors\HaliteEncryptor;
-use ParagonIE\Halite\KeyFactory;
-use Symfony\Component\Filesystem\Filesystem;
+use Ambta\DoctrineEncryptBundle\Encryptors\SecretGeneratorInterface;
+use Ambta\DoctrineEncryptBundle\Exception\DoctrineEncyptBundleException;
+use Ambta\DoctrineEncryptBundle\Exception\UnableToGenerateSecretException;
 
 class SecretFactory
 {
@@ -19,12 +19,13 @@ class SecretFactory
      */
     private $enableSecretCreation;
     /**
-     * @var Filesystem
+     * @var string
      */
-    private $fs;
+    private $encryptor;
 
-    public function __construct(string $secretDirectory, bool $enableSecretCreation)
+    public function __construct(string $encryptor, string $secretDirectory, bool $enableSecretCreation)
     {
+        $this->encryptor            = $encryptor;
         $this->secretDirectory      = $secretDirectory;
         $this->enableSecretCreation = $enableSecretCreation;
     }
@@ -34,16 +35,20 @@ class SecretFactory
      *
      * @return string
      */
-    public function getSecret(string $className)
+    public function getSecret()
     {
-        if (!in_array($className,DoctrineEncryptExtension::SupportedEncryptorClasses)) {
-            throw new \RuntimeException(sprintf('Class "%s" is not supported by %s',$className,self::class));
+        $className = $this->encryptor;
+
+        if (!is_a($this->encryptor, SecretGeneratorInterface::class, true)) {
+            throw new UnableToGenerateSecretException(sprintf('Class "%s" is not supported by %s',$className,self::class));
         }
 
         if ($className === HaliteEncryptor::class) {
             $filename = '.Halite.key';
-        } else {
+        } elseif ($className === DefuseEncryptor::class) {
             $filename = '.Defuse.key';
+        } else {
+            $filename = '.DoctrineEncryptBundle.key';
         }
 
         $secretPath = $this->secretDirectory.DIRECTORY_SEPARATOR.$filename;
@@ -54,15 +59,14 @@ class SecretFactory
                     throw new \RuntimeException('Creation of secrets is not enabled');
                 }
 
-                return $this->createSecret($secretPath,$className);
+                return $this->createSecret($secretPath);
             } catch (\Throwable $e) {
-                throw new \RuntimeException(sprintf('DoctrineEncryptBundle: Unable to create secret "%s"',$secretPath),$e->getCode(),$e);
+                throw new UnableToGenerateSecretException(sprintf('DoctrineEncryptBundle: Unable to create secret "%s"',$secretPath),$e->getCode(),$e);
             }
-
         }
 
         if (!is_readable($secretPath) || ($secret = file_get_contents($secretPath)) === false) {
-            throw new \RuntimeException(sprintf('DoctrineEncryptBundle: Unable to read secret "%s"',$secretPath));
+            throw new DoctrineEncyptBundleException(sprintf('DoctrineEncryptBundle: Unable to read secret "%s"',$secretPath));
         }
 
         return $secret;
@@ -76,16 +80,11 @@ class SecretFactory
      *
      * @return string The generated secret
      */
-    private function createSecret(string $secretPath, string $className)
+    private function createSecret(string $secretPath)
     {
-        if ($className === HaliteEncryptor::class) {
-            $encryptionKey = KeyFactory::generateEncryptionKey();
-            KeyFactory::save($encryptionKey, $secretPath);
-            $secret = KeyFactory::export($encryptionKey)->getString();
-        } elseif ($className === DefuseEncryptor::class) {
-            $secret = bin2hex(random_bytes(255));
-            file_put_contents($secretPath, $secret);
-        }
+        $secret = call_user_func([$this->encryptor,'generateSecret'])->getString();
+
+        file_put_contents($secretPath, $secret);
 
         return $secret;
     }
