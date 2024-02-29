@@ -2,6 +2,7 @@
 
 namespace Ambta\DoctrineEncryptBundle\Encryptors;
 
+use ParagonIE\HiddenString\HiddenString;
 use Symfony\Component\Filesystem\Filesystem;
 
 /**
@@ -10,7 +11,7 @@ use Symfony\Component\Filesystem\Filesystem;
  * @author Michael de Groot <specamps@gmail.com>
  */
 
-class DefuseEncryptor implements EncryptorInterface
+class DefuseEncryptor implements EncryptorInterface, SecretGeneratorInterface
 {
     /** @var string  */
     private $secret;
@@ -37,5 +38,10 @@ class DefuseEncryptor implements EncryptorInterface
     public function decrypt(string $data): string
     {
         return \Defuse\Crypto\Crypto::decryptWithPassword($data, $this->secret);
+    }
+
+    public static function generateSecret(): HiddenString
+    {
+        return new HiddenString(bin2hex(random_bytes(255)));
     }
 }
