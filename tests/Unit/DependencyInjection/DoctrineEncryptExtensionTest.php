@@ -214,7 +214,7 @@ class DoctrineEncryptExtensionTest extends TestCase
         $this->expectDeprecation('Since doctrineencryptbundle/doctrine-encrypt-bundle 5.4.2: Starting from 6.0, all exceptions thrown by this library will be wrapped by \Ambta\DoctrineEncryptBundle\Exception\DoctrineEncryptBundleException or a child-class of it.
 You can start using these exceptions today by setting \'ambta_doctrine_encrypt.wrap_exceptions\' to TRUE.');
         $this->extension->load([$config], $container);
-        $this->assertFalse(DoctrineEncryptExtension::$wrapExceptions);
+        $this->assertFalse(DoctrineEncryptExtension::wrapExceptions());
     }
 
     /**
@@ -228,7 +228,7 @@ You can start using these exceptions today by setting \'ambta_doctrine_encrypt.w
         $this->expectDeprecation('Since doctrineencryptbundle/doctrine-encrypt-bundle 5.4.2: Starting from 6.0, all exceptions thrown by this library will be wrapped by \Ambta\DoctrineEncryptBundle\Exception\DoctrineEncryptBundleException or a child-class of it.
 You can start using these exceptions today by setting \'ambta_doctrine_encrypt.wrap_exceptions\' to TRUE.');
         $this->extension->load([$config], $container);
-        $this->assertFalse(DoctrineEncryptExtension::$wrapExceptions);
+        $this->assertFalse(DoctrineEncryptExtension::wrapExceptions());
     }
 
     /**
@@ -240,7 +240,7 @@ You can start using these exceptions today by setting \'ambta_doctrine_encrypt.w
         $config    = ['wrap_exceptions' => true];
 
         $this->extension->load([$config], $container);
-        $this->assertTrue(DoctrineEncryptExtension::$wrapExceptions);
+        $this->assertTrue(DoctrineEncryptExtension::wrapExceptions());
     }
 
     private function createContainer(): ContainerBuilder
