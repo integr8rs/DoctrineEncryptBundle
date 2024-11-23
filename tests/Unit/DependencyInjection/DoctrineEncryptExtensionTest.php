@@ -8,12 +8,15 @@ use Ambta\DoctrineEncryptBundle\Encryptors\HaliteEncryptor;
 use ParagonIE\Halite\KeyFactory;
 use ParagonIE\HiddenString\HiddenString;
 use PHPUnit\Framework\TestCase;
+use Symfony\Bridge\PhpUnit\ExpectDeprecationTrait;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
 use Symfony\Component\ExpressionLanguage\Expression;
 
 class DoctrineEncryptExtensionTest extends TestCase
 {
+    use ExpectDeprecationTrait;
+
     /**
      * @var DoctrineEncryptExtension
      */
@@ -198,6 +201,46 @@ class DoctrineEncryptExtensionTest extends TestCase
         }
         $this->assertIsString($actualSecret);
         $this->assertEquals($expectedSecret, $actualSecret);
+    }
+
+    /**
+     * @group legacy
+     */
+    public function testWrapExceptionsTriggersDeprecationWarningWhenNotDefiningTheOption(): void
+    {
+        $container = $this->createContainer();
+        $config    = [];
+
+        $this->expectDeprecation('Since doctrineencryptbundle/doctrine-encrypt-bundle 5.4.2: Starting from 6.0, all exceptions thrown by this library will be wrapped by \Ambta\DoctrineEncryptBundle\Exception\DoctrineEncryptBundleException or a child-class of it.
+You can start using these exceptions today by setting \'ambta_doctrine_encrypt.wrap_exceptions\' to TRUE.');
+        $this->extension->load([$config], $container);
+        $this->assertFalse(DoctrineEncryptExtension::$wrapExceptions);
+    }
+
+    /**
+     * @group legacy
+     */
+    public function testWrapExceptionsTriggersDeprecationWarningWhenDisabled(): void
+    {
+        $container = $this->createContainer();
+        $config    = ['wrap_exceptions' => false];
+
+        $this->expectDeprecation('Since doctrineencryptbundle/doctrine-encrypt-bundle 5.4.2: Starting from 6.0, all exceptions thrown by this library will be wrapped by \Ambta\DoctrineEncryptBundle\Exception\DoctrineEncryptBundleException or a child-class of it.
+You can start using these exceptions today by setting \'ambta_doctrine_encrypt.wrap_exceptions\' to TRUE.');
+        $this->extension->load([$config], $container);
+        $this->assertFalse(DoctrineEncryptExtension::$wrapExceptions);
+    }
+
+    /**
+     * @group legacy
+     */
+    public function testWrapExceptionsDoesNotTriggerDeprecationWarningWhenEnabled(): void
+    {
+        $container = $this->createContainer();
+        $config    = ['wrap_exceptions' => true];
+
+        $this->extension->load([$config], $container);
+        $this->assertTrue(DoctrineEncryptExtension::$wrapExceptions);
     }
 
     private function createContainer(): ContainerBuilder

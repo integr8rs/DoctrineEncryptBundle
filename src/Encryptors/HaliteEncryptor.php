@@ -1,7 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ambta\DoctrineEncryptBundle\Encryptors;
 
+use Ambta\DoctrineEncryptBundle\DependencyInjection\DoctrineEncryptExtension;
+use Ambta\DoctrineEncryptBundle\Exception\UnableToDecryptException;
+use Ambta\DoctrineEncryptBundle\Exception\UnableToEncryptException;
 use ParagonIE\Halite\KeyFactory;
 use ParagonIE\Halite\Symmetric\Crypto;
 use ParagonIE\Halite\Symmetric\EncryptionKey;
@@ -24,14 +29,40 @@ class HaliteEncryptor implements EncryptorInterface
         $this->secret = $secret;
     }
 
+    /**
+     * @throws UnableToEncryptException
+     * @throws \ParagonIE\Halite\Alerts\HaliteAlert
+     * @throws \SodiumException
+     * @throws \Throwable
+     */
     public function encrypt(string $data): string
     {
-        return Crypto::encrypt(new HiddenString($data), $this->getKey());
+        try {
+            return Crypto::encrypt(new HiddenString($data), $this->getKey());
+        } catch (\Throwable $e) {
+            if (DoctrineEncryptExtension::$wrapExceptions) {
+                throw new UnableToEncryptException($e->getMessage(), $e->getCode(), $e);
+            }
+            throw $e;
+        }
     }
 
+    /**
+     * @throws UnableToDecryptException
+     * @throws \ParagonIE\Halite\Alerts\HaliteAlert
+     * @throws \SodiumException
+     * @throws \Throwable
+     */
     public function decrypt(string $data): string
     {
-        return Crypto::decrypt($data, $this->getKey())->getString();
+        try {
+            return Crypto::decrypt($data, $this->getKey())->getString();
+        } catch (\Throwable $e) {
+            if (DoctrineEncryptExtension::$wrapExceptions) {
+                throw new UnableToDecryptException($e->getMessage(), $e->getCode(), $e);
+            }
+            throw $e;
+        }
     }
 
     private function getKey(): EncryptionKey
@@ -41,10 +72,5 @@ class HaliteEncryptor implements EncryptorInterface
         }
 
         return $this->encryptionKey;
-    }
-
-    public function validateSecret()
-    {
-        $this->getKey();
     }
 }

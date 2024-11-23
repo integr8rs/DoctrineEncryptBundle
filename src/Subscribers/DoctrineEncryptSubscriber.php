@@ -2,7 +2,9 @@
 
 namespace Ambta\DoctrineEncryptBundle\Subscribers;
 
+use Ambta\DoctrineEncryptBundle\DependencyInjection\DoctrineEncryptExtension;
 use Ambta\DoctrineEncryptBundle\Encryptors\EncryptorInterface;
+use Ambta\DoctrineEncryptBundle\Exception\DoctrineEncryptBundleException;
 use Ambta\DoctrineEncryptBundle\Mapping\AttributeReader;
 use Doctrine\Common\Annotations\Reader;
 use Doctrine\Common\EventSubscriber;
@@ -15,7 +17,6 @@ use Doctrine\ORM\Event\PostFlushEventArgs;
 use Doctrine\ORM\Event\PreFlushEventArgs;
 use Doctrine\ORM\Events;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
-use ReflectionClass;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
 /**
@@ -232,61 +233,87 @@ class DoctrineEncryptSubscriber implements EventSubscriber
      * @param object $entity             doctrine entity
      * @param bool   $isEncryptOperation If true - encrypt, false - decrypt entity
      *
-     * @throws \RuntimeException
+     * @throws \RuntimeException|DoctrineEncryptBundleException
      */
     public function processFields(object $entity, EntityManagerInterface $entityManager, bool $isEncryptOperation = true): ?object
     {
-        if (!empty($this->encryptor) && $this->containsEncryptProperties($entity)) {
-            $realClass = ClassUtils::getClass($entity);
+        if (empty($this->encryptor) || !$this->containsEncryptProperties($entity)) {
+            return $entity;
+        }
 
-            // Get ReflectionClass of our entity
-            $properties = $this->getClassProperties($realClass);
+        try {
+            if (!empty($this->encryptor) && $this->containsEncryptProperties($entity)) {
+                $realClass = ClassUtils::getClass($entity);
 
-            // Foreach property in the reflection class
-            foreach ($properties as $refProperty) {
-                if ($this->isPropertyAnEmbeddedMapping($refProperty)) {
-                    $this->handleEmbeddedAnnotation($entity, $entityManager, $refProperty, $isEncryptOperation);
-                    continue;
-                }
+                // Get ReflectionClass of our entity
+                $properties = $this->getClassProperties($realClass);
 
-                /**
-                 * If property is an normal value and contains the Encrypt tag, lets encrypt/decrypt that property.
-                 */
-                $encryptType = $this->getEncryptedPropertyType($refProperty);
-                if ($encryptType) {
-                    $encryptDbalType = \Doctrine\DBAL\Types\Type::getType($encryptType);
-                    $platform        = new MySQL80Platform();
-                    $rootEntityName  = $entityManager->getClassMetadata(get_class($entity))->rootEntityName;
+                // Foreach property in the reflection class
+                foreach ($properties as $refProperty) {
+                    if ($this->isPropertyAnEmbeddedMapping($refProperty)) {
+                        $this->handleEmbeddedAnnotation($entity, $entityManager, $refProperty, $isEncryptOperation);
+                        continue;
+                    }
 
-                    $value = $this->pac->getValue($entity, $refProperty->getName());
-                    if (!is_null($value) and !empty($value)) {
-                        if ($isEncryptOperation) {
-                            // Convert to a string using doctrine-type
-                            $usedValue = $encryptDbalType->convertToDatabaseValue($value, $platform);
+                    /**
+                     * If property is an normal value and contains the Encrypt tag, lets encrypt/decrypt that property.
+                     */
+                    $encryptType = $this->getEncryptedPropertyType($refProperty);
+                    if ($encryptType) {
+                        $encryptDbalType = \Doctrine\DBAL\Types\Type::getType($encryptType);
+                        $platform        = new MySQL80Platform();
+                        $rootEntityName  = $entityManager->getClassMetadata(get_class($entity))->rootEntityName;
 
-                            if (isset($this->cachedDecryptions[$rootEntityName][spl_object_id($entity)][$refProperty->getName()][$usedValue])) {
-                                $this->pac->setValue($entity, $refProperty->getName(), $this->cachedDecryptions[$rootEntityName][spl_object_id($entity)][$refProperty->getName()][$usedValue]);
-                            } elseif (substr($usedValue, -strlen(self::ENCRYPTION_MARKER)) != self::ENCRYPTION_MARKER) {
-                                ++$this->encryptCounter;
-                                $currentPropValue = $this->encryptor->encrypt($usedValue).self::ENCRYPTION_MARKER;
-                                $this->pac->setValue($entity, $refProperty->getName(), $currentPropValue);
-                            }
-                        } else {
-                            if (substr($value, -strlen(self::ENCRYPTION_MARKER)) == self::ENCRYPTION_MARKER) {
-                                ++$this->decryptCounter;
-                                $currentPropValue                                                                                             = $this->encryptor->decrypt(substr($value, 0, -5));
-                                $this->cachedDecryptions[$rootEntityName][spl_object_id($entity)][$refProperty->getName()][$currentPropValue] = $value;
+                        $value = $this->pac->getValue($entity, $refProperty->getName());
+                        if (!is_null($value) and !empty($value)) {
+                            if ($isEncryptOperation) {
+                                // Convert to a string using doctrine-type
+                                $usedValue = $encryptDbalType->convertToDatabaseValue($value, $platform);
 
-                                // Convert from a string to the PHP-type again using dbal-type
-                                $actualValue = $encryptDbalType->convertToPHPValue($currentPropValue, $platform);
-                                $this->pac->setValue($entity, $refProperty->getName(), $actualValue);
+                                if (isset(
+                                    $this->cachedDecryptions[$rootEntityName][spl_object_id(
+                                        $entity
+                                    )][$refProperty->getName()][$usedValue]
+                                )) {
+                                    $this->pac->setValue(
+                                        $entity,
+                                        $refProperty->getName(),
+                                        $this->cachedDecryptions[$rootEntityName][spl_object_id(
+                                            $entity
+                                        )][$refProperty->getName()][$usedValue]
+                                    );
+                                } elseif (substr(
+                                    $usedValue,
+                                    -strlen(self::ENCRYPTION_MARKER)
+                                ) != self::ENCRYPTION_MARKER) {
+                                    ++$this->encryptCounter;
+                                    $currentPropValue = $this->encryptor->encrypt($usedValue).self::ENCRYPTION_MARKER;
+                                    $this->pac->setValue($entity, $refProperty->getName(), $currentPropValue);
+                                }
+                            } else {
+                                if (substr($value, -strlen(self::ENCRYPTION_MARKER)) == self::ENCRYPTION_MARKER) {
+                                    ++$this->decryptCounter;
+                                    $currentPropValue = $this->encryptor->decrypt(substr($value, 0, -5));
+                                    $this->cachedDecryptions[$rootEntityName][spl_object_id(
+                                        $entity
+                                    )][$refProperty->getName()][$currentPropValue] = $value;
+
+                                    // Convert from a string to the PHP-type again using dbal-type
+                                    $actualValue = $encryptDbalType->convertToPHPValue($currentPropValue, $platform);
+                                    $this->pac->setValue($entity, $refProperty->getName(), $actualValue);
+                                }
                             }
                         }
                     }
                 }
             }
-
-            return $entity;
+        } catch (DoctrineEncryptBundleException $e) {
+            throw $e;
+        } catch (\Throwable $e) {
+            if (DoctrineEncryptExtension::$wrapExceptions) {
+                throw new DoctrineEncryptBundleException('Something went wrong encrypting/decrypting a secret', 0, $e);
+            }
+            throw $e;
         }
 
         return $entity;
