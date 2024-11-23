@@ -19,7 +19,6 @@ use Doctrine\ORM\Mapping\Embedded;
 use Doctrine\ORM\UnitOfWork;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use ReflectionClass;
 
 class DoctrineEncryptSubscriberTest extends TestCase
 {
@@ -47,15 +46,14 @@ class DoctrineEncryptSubscriberTest extends TestCase
     protected function createMock($originalClassName): MockObject
     {
         $oldErrorLevel = ini_get('error_reporting');
-        ini_set('error_reporting',E_ALL ^ E_DEPRECATED);
+        ini_set('error_reporting', E_ALL ^ E_DEPRECATED);
 
         $return = parent::createMock($originalClassName);
 
-        ini_set('error_reporting',$oldErrorLevel);
+        ini_set('error_reporting', $oldErrorLevel);
 
         return $return;
     }
-
 
     protected function setUp(): void
     {
@@ -80,8 +78,7 @@ class DoctrineEncryptSubscriberTest extends TestCase
             ->method('getPropertyAnnotation')
             ->willReturnCallback(function (\ReflectionProperty $reflProperty, string $class) {
                 if (Encrypted::class === $class) {
-                    if (\in_array($reflProperty->getName(), ['name', 'address', 'extra']))
-                    {
+                    if (\in_array($reflProperty->getName(), ['name', 'address', 'extra'])) {
                         return new $class();
                     }
                 }
@@ -95,20 +92,20 @@ class DoctrineEncryptSubscriberTest extends TestCase
 
         $this->conn = $this->createMock(Connection::class);
         $this->conn->method('getDatabasePlatform')
-            ->willReturnCallback(function() {
+            ->willReturnCallback(function () {
                 return new MySQL80Platform();
             });
 
         $this->em = $this->createMock(EntityManagerInterface::class);
         $this->em->method('getClassMetadata')
             ->willReturnCallback(function (string $className) {
-                $classMetaData = $this->createMock(ClassMetadata::class);
+                $classMetaData                 = $this->createMock(ClassMetadata::class);
                 $classMetaData->rootEntityName = $className;
 
                 return $classMetaData;
             });
         $this->em->method('getConnection')
-            ->willReturnCallback(function() {
+            ->willReturnCallback(function () {
                 return $this->conn;
             });
 
@@ -126,19 +123,19 @@ class DoctrineEncryptSubscriberTest extends TestCase
         $this->assertSame($this->encryptor, $this->subscriber->getEncryptor());
     }
 
-    private function triggerProcessFields(Object $entity, bool $encrypt)
+    private function triggerProcessFields(object $entity, bool $encrypt)
     {
-        $class  = new ReflectionClass(DoctrineEncryptSubscriber::class);
+        $class  = new \ReflectionClass(DoctrineEncryptSubscriber::class);
         $method = $class->getMethod('processFields');
         $method->setAccessible(true);
-        $method->invokeArgs($this->subscriber,[$entity,$this->em,$encrypt]);
+        $method->invokeArgs($this->subscriber, [$entity, $this->em, $encrypt]);
     }
 
     public function testProcessFieldsEncrypt(): void
     {
         $user = new User('David', 'Switzerland');
 
-        $this->triggerProcessFields($user,true);
+        $this->triggerProcessFields($user, true);
 
         $this->assertStringStartsWith('encrypted-', $user->name);
         $this->assertStringStartsWith('encrypted-', $user->getAddress());
@@ -148,7 +145,7 @@ class DoctrineEncryptSubscriberTest extends TestCase
     {
         $user = new ExtendedUser('David', 'Switzerland', 'extra');
 
-        $this->triggerProcessFields($user,true);
+        $this->triggerProcessFields($user, true);
 
         $this->assertStringStartsWith('encrypted-', $user->name);
         $this->assertStringStartsWith('encrypted-', $user->getAddress());
@@ -157,10 +154,9 @@ class DoctrineEncryptSubscriberTest extends TestCase
 
     public function testProcessFieldsEncryptEmbedded(): void
     {
-
         $withUser = new WithUser('Thing', 'foo', new User('David', 'Switzerland'));
 
-        $this->triggerProcessFields($withUser,true);
+        $this->triggerProcessFields($withUser, true);
 
         $this->assertStringStartsWith('encrypted-', $withUser->name);
         $this->assertSame('foo', $withUser->foo);
@@ -172,7 +168,7 @@ class DoctrineEncryptSubscriberTest extends TestCase
     {
         $user = new User('David', null);
 
-        $this->triggerProcessFields($user,true);
+        $this->triggerProcessFields($user, true);
 
         $this->assertStringStartsWith('encrypted-', $user->name);
         $this->assertNull($user->getAddress());
@@ -183,7 +179,7 @@ class DoctrineEncryptSubscriberTest extends TestCase
         $user = new User('David', 'Switzerland');
 
         $this->subscriber->setEncryptor(null);
-        $this->triggerProcessFields($user,true);
+        $this->triggerProcessFields($user, true);
 
         $this->assertSame('David', $user->name);
         $this->assertSame('Switzerland', $user->getAddress());
@@ -193,7 +189,7 @@ class DoctrineEncryptSubscriberTest extends TestCase
     {
         $user = new User('encrypted-David<ENC>', 'encrypted-Switzerland<ENC>');
 
-        $this->triggerProcessFields($user,false);
+        $this->triggerProcessFields($user, false);
 
         $this->assertSame('David', $user->name);
         $this->assertSame('Switzerland', $user->getAddress());
@@ -203,7 +199,7 @@ class DoctrineEncryptSubscriberTest extends TestCase
     {
         $user = new ExtendedUser('encrypted-David<ENC>', 'encrypted-Switzerland<ENC>', 'encrypted-extra<ENC>');
 
-        $this->triggerProcessFields($user,false);
+        $this->triggerProcessFields($user, false);
 
         $this->assertSame('David', $user->name);
         $this->assertSame('Switzerland', $user->getAddress());
@@ -214,7 +210,7 @@ class DoctrineEncryptSubscriberTest extends TestCase
     {
         $withUser = new WithUser('encrypted-Thing<ENC>', 'foo', new User('encrypted-David<ENC>', 'encrypted-Switzerland<ENC>'));
 
-        $this->triggerProcessFields($withUser,false);
+        $this->triggerProcessFields($withUser, false);
 
         $this->assertSame('Thing', $withUser->name);
         $this->assertSame('foo', $withUser->foo);
@@ -226,7 +222,7 @@ class DoctrineEncryptSubscriberTest extends TestCase
     {
         $user = new User('encrypted-David<ENC>', null);
 
-        $this->triggerProcessFields($user,false);
+        $this->triggerProcessFields($user, false);
 
         $this->assertSame('David', $user->name);
         $this->assertNull($user->getAddress());
@@ -237,7 +233,7 @@ class DoctrineEncryptSubscriberTest extends TestCase
         // no trailing <ENC> but somethint that our mock decrypt would change if called
         $user = new User('encrypted-David', 'encrypted-Switzerland');
 
-        $this->triggerProcessFields($user,false);
+        $this->triggerProcessFields($user, false);
 
         $this->assertSame('encrypted-David', $user->name);
         $this->assertSame('encrypted-Switzerland', $user->getAddress());
@@ -260,17 +256,17 @@ class DoctrineEncryptSubscriberTest extends TestCase
             ->method('getUnitOfWork')
             ->willReturn($uow)
         ;
-        $classMetaData = $this->createMock(ClassMetadata::class);
+        $classMetaData                 = $this->createMock(ClassMetadata::class);
         $classMetaData->rootEntityName = User::class;
         $em->method('getClassMetadata')
             ->willReturnCallback(function (string $className) {
-                $classMetaData = $this->createMock(ClassMetadata::class);
+                $classMetaData                 = $this->createMock(ClassMetadata::class);
                 $classMetaData->rootEntityName = $className;
 
                 return $classMetaData;
             });
         $em->method('getConnection')
-            ->willReturnCallback(function() {
+            ->willReturnCallback(function () {
                 return $this->conn;
             });
         $uow->expects($this->any())->method('recomputeSingleEntityChangeSet');
@@ -284,7 +280,7 @@ class DoctrineEncryptSubscriberTest extends TestCase
     }
 
     /**
-     * Test that fields are decrypted again after flushing
+     * Test that fields are decrypted again after flushing.
      */
     public function testPostFlush(): void
     {
@@ -300,17 +296,17 @@ class DoctrineEncryptSubscriberTest extends TestCase
             ->method('getUnitOfWork')
             ->willReturn($uow)
         ;
-        $classMetaData = $this->createMock(ClassMetadata::class);
+        $classMetaData                 = $this->createMock(ClassMetadata::class);
         $classMetaData->rootEntityName = User::class;
         $em->method('getClassMetadata')
             ->willReturnCallback(function (string $className) {
-                $classMetaData = $this->createMock(ClassMetadata::class);
+                $classMetaData                 = $this->createMock(ClassMetadata::class);
                 $classMetaData->rootEntityName = $className;
 
                 return $classMetaData;
             });
         $em->method('getConnection')
-            ->willReturnCallback(function() {
+            ->willReturnCallback(function () {
                 return $this->conn;
             });
 
@@ -329,8 +325,7 @@ class DoctrineEncryptSubscriberTest extends TestCase
             ->method('getPropertyAnnotation')
             ->willReturnCallback(function (\ReflectionProperty $reflProperty, string $class) {
                 if (Encrypted::class === $class) {
-                    if (\in_array($reflProperty->getName(), ['name', 'address', 'extra']))
-                    {
+                    if (\in_array($reflProperty->getName(), ['name', 'address', 'extra'])) {
                         return new $class();
                     }
                 }
@@ -344,15 +339,14 @@ class DoctrineEncryptSubscriberTest extends TestCase
 
         $subscriber = new DoctrineEncryptSubscriber($reader, $this->encryptor);
 
-
         $user = new User('David', 'Switzerland');
 
-        $class  = new ReflectionClass(DoctrineEncryptSubscriber::class);
+        $class  = new \ReflectionClass(DoctrineEncryptSubscriber::class);
         $method = $class->getMethod('processFields');
         $method->setAccessible(true);
-        $method->invokeArgs($subscriber,[$user,$this->em,true]);
+        $method->invokeArgs($subscriber, [$user, $this->em, true]);
 
         // Execute second time and see if we once more read the propertyannotation
-        $method->invokeArgs($subscriber,[$user,$this->em,true]);
+        $method->invokeArgs($subscriber, [$user, $this->em, true]);
     }
 }

@@ -10,15 +10,15 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class DefaultController extends AbstractController
 {
-    #[Route(name:'home', path:'/')]
-    public function index(\App\Repository\Attribute\SecretRepository  $secretUsingAttributesRepository): Response
+    #[Route(name: 'home', path: '/')]
+    public function index(\App\Repository\Attribute\SecretRepository $secretUsingAttributesRepository): Response
     {
         $secrets = $secretUsingAttributesRepository->findAll();
 
-        return $this->render('index.html.twig',['secrets' => $secrets]);
+        return $this->render('index.html.twig', ['secrets' => $secrets]);
     }
 
-    #[Route(name:'create', path:'/create')]
+    #[Route(name: 'create', path: '/create')]
     public function create(Request $request, EntityManagerInterface $em): Response
     {
         if (!$request->query->has('name') || !$request->query->has('secret') || !$request->query->has('type')) {
@@ -26,7 +26,7 @@ class DefaultController extends AbstractController
         }
 
         $type = $request->query->get('type');
-        if($type === 'attribute') {
+        if ($type === 'attribute') {
             $secret = new \App\Entity\Attribute\Secret();
         } else {
             return new Response('Type is only allowed to be "attribute"');
@@ -39,6 +39,6 @@ class DefaultController extends AbstractController
         $em->persist($secret);
         $em->flush();
 
-        return new Response(sprintf('OK - secret %s stored',$secret->getName()));
+        return new Response(sprintf('OK - secret %s stored', $secret->getName()));
     }
 }

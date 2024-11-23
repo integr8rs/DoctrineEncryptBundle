@@ -6,7 +6,7 @@
 name: CI
 on:
   push:
-  #  branches: ['main','master']
+    branches: ['main','master','5.4','6.0']
   pull_request:
 
 jobs:
@@ -42,6 +42,12 @@ jobs:
       - name: "PHPCompatibility"
         run:  "vendor/bin/phpcs src/ tests/ --standard=PHPCompatibility --runtime-set testVersion 7.2-8.1"
 
+      - name: PHP-CS-Fixer
+        uses: docker://ghcr.io/php-cs-fixer/php-cs-fixer:3.64-php8.3
+        with:
+          args: "check"
+          # use `check .` if your repository not having paths configured in .php-cs-fixer[.dist].php
+
   tests:
     name: "Tests ${{ matrix.php-version }} ${{ matrix.dependency-versions }}"
     runs-on: ubuntu-22.04
@@ -75,7 +81,11 @@ jobs:
 #      - name: Install Global Dependencies
 #        run: |
 #          composer global require --no-progress --no-scripts --no-plugins symfony/flex >=1.x
- 
+
+      - name: "Remove php-cs-fixer"
+        run: 'composer remove --dev friendsofphp/php-cs-fixer'
+        if: ${{ startsWith(matrix.php-version , '7') }}
+
       - name: "Composer install"
         uses: "ramsey/composer-install@v3"
         with:

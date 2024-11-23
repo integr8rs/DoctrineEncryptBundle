@@ -15,7 +15,7 @@ class DefaultController extends AbstractController
      */
     public function index(\App\Repository\Attribute\SecretRepository $secretRepository): Response
     {
-        return $this->render('index.html.twig',['secrets' => $secretRepository->findAll()]);
+        return $this->render('index.html.twig', ['secrets' => $secretRepository->findAll()]);
     }
 
     /**
@@ -36,6 +36,6 @@ class DefaultController extends AbstractController
         $em->persist($secret);
         $em->flush();
 
-        return new Response(sprintf('OK - secret %s stored',$secret->getName()));
+        return new Response(sprintf('OK - secret %s stored', $secret->getName()));
     }
 }

@@ -2,9 +2,7 @@
 
 namespace Ambta\DoctrineEncryptBundle\Mapping;
 
-use Attribute;
 use Ambta\DoctrineEncryptBundle\Configuration\Annotation;
-use ReflectionClass;
 
 /**
  * @author Flavien Bucheton <leflav45@gmail.com>
@@ -17,10 +15,9 @@ final class AttributeReader
     private $isRepeatableAttribute = [];
 
     /**
-     * @param ReflectionClass $class
      * @return Annotation[]
      */
-    public function getClassAnnotations(ReflectionClass $class): array
+    public function getClassAnnotations(\ReflectionClass $class): array
     {
         return (method_exists($class, 'getAttributes')) ? $this->convertToAttributeInstances($class->getAttributes()) : [];
     }
@@ -30,13 +27,12 @@ final class AttributeReader
      *
      * @return Annotation|Annotation[]|null
      */
-    public function getClassAnnotation(ReflectionClass $class, string $annotationName)
+    public function getClassAnnotation(\ReflectionClass $class, string $annotationName)
     {
         return $this->getClassAnnotations($class)[$annotationName] ?? null;
     }
 
     /**
-     * @param \ReflectionProperty $property
      * @return Annotation[]
      */
     public function getPropertyAnnotations(\ReflectionProperty $property): array
@@ -56,8 +52,6 @@ final class AttributeReader
 
     /**
      * @param array<\ReflectionAttribute> $attributes
-     *
-     * @return array
      */
     private function convertToAttributeInstances(array $attributes): array
     {
@@ -94,9 +88,9 @@ final class AttributeReader
             return $this->isRepeatableAttribute[$attributeClassName];
         }
 
-        $reflectionClass = new ReflectionClass($attributeClassName);
-        $attribute = $reflectionClass->getAttributes()[0]->newInstance();
+        $reflectionClass = new \ReflectionClass($attributeClassName);
+        $attribute       = $reflectionClass->getAttributes()[0]->newInstance();
 
-        return $this->isRepeatableAttribute[$attributeClassName] = ($attribute->flags & Attribute::IS_REPEATABLE) > 0;
+        return $this->isRepeatableAttribute[$attributeClassName] = ($attribute->flags & \Attribute::IS_REPEATABLE) > 0;
     }
 }

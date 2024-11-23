@@ -17,9 +17,7 @@ class Kernel extends BaseKernel
         $this->microKernelRegisterContainerConfiguration($loader);
 
         if (PHP_VERSION_ID >= 80000) {
-            $loader->load( $this->getConfigDir().'/{packages}/php8/*.{yml,yaml}', 'glob');
+            $loader->load($this->getConfigDir().'/{packages}/php8/*.{yml,yaml}', 'glob');
         }
     }
-
-
 }

@@ -14,9 +14,6 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class DoctrineEncryptStatusCommand extends AbstractCommand
 {
-    /**
-     * {@inheritdoc}
-     */
     protected function configure(): void
     {
         $this
@@ -24,9 +21,6 @@ class DoctrineEncryptStatusCommand extends AbstractCommand
             ->setDescription('Get status of doctrine encrypt bundle and the database');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $metaDataArray = $this->entityManager->getMetadataFactory()->getAllMetadata();
@@ -37,11 +31,11 @@ class DoctrineEncryptStatusCommand extends AbstractCommand
                 continue;
             }
 
-            $count = 0;
+            $count                    = 0;
             $encryptedPropertiesCount = count($this->getEncryptionableProperties($metaData));
             if ($encryptedPropertiesCount > 0) {
                 $totalCount += $encryptedPropertiesCount;
-                $count += $encryptedPropertiesCount;
+                $count      += $encryptedPropertiesCount;
             }
 
             if ($count > 0) {

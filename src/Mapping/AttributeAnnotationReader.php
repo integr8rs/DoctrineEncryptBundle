@@ -2,11 +2,9 @@
 
 namespace Ambta\DoctrineEncryptBundle\Mapping;
 
-use Doctrine\Common\Annotations\Reader;
 use Ambta\DoctrineEncryptBundle\Configuration\Annotation;
 use Doctrine\Common\Annotations\PsrCachedReader;
-use ReflectionClass;
-use ReflectionMethod;
+use Doctrine\Common\Annotations\Reader;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 
 /**
@@ -28,15 +26,15 @@ final class AttributeAnnotationReader implements Reader
 
     public function __construct(AttributeReader $attributeReader, Reader $annotationReader, string $cacheDir)
     {
-        $this->attributeReader = $attributeReader;
-        $annotationsCache = new FilesystemAdapter('', 0, $cacheDir.'/doctrine_encrypt');
-        $this->annotationReader = new PsrCachedReader ($annotationReader, $annotationsCache);
+        $this->attributeReader  = $attributeReader;
+        $annotationsCache       = new FilesystemAdapter('', 0, $cacheDir.'/doctrine_encrypt');
+        $this->annotationReader = new PsrCachedReader($annotationReader, $annotationsCache);
     }
 
     /**
      * @return Annotation[]
      */
-    public function getClassAnnotations(ReflectionClass $class): array
+    public function getClassAnnotations(\ReflectionClass $class): array
     {
         $annotations = $this->attributeReader->getClassAnnotations($class);
 
@@ -54,7 +52,7 @@ final class AttributeAnnotationReader implements Reader
      *
      * @template T
      */
-    public function getClassAnnotation(ReflectionClass $class, $annotationName)
+    public function getClassAnnotation(\ReflectionClass $class, $annotationName)
     {
         $annotation = $this->attributeReader->getClassAnnotation($class, $annotationName);
 
@@ -97,17 +95,12 @@ final class AttributeAnnotationReader implements Reader
         return $this->annotationReader->getPropertyAnnotation($property, $annotationName);
     }
 
-    public function getMethodAnnotations(ReflectionMethod $method): array
+    public function getMethodAnnotations(\ReflectionMethod $method): array
     {
         throw new \BadMethodCallException('Not implemented');
     }
 
-    /**
-     * @param ReflectionMethod $method
-     * @param $annotationName
-     * @return mixed
-     */
-    public function getMethodAnnotation(ReflectionMethod $method, $annotationName): mixed
+    public function getMethodAnnotation(\ReflectionMethod $method, $annotationName): mixed
     {
         throw new \BadMethodCallException('Not implemented');
     }

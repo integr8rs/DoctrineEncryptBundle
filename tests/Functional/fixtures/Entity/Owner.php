@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Ambta\DoctrineEncryptBundle\Tests\Functional\fixtures\Entity;
 
 use Ambta\DoctrineEncryptBundle\Configuration\Encrypted;
@@ -14,27 +13,31 @@ class Owner
 {
     /**
      * @var int
+     *
      * @ORM\Id
+     *
      * @ORM\Column(type="integer")
+     *
      * @ORM\GeneratedValue
      */
     #[ORM\Id]
-    #[ORM\Column(type:"integer")]
+    #[ORM\Column(type: 'integer')]
     #[ORM\GeneratedValue]
     private $id;
 
     /**
      * @Encrypted
+     *
      * @ORM\Column(type="string", nullable=true)
      */
     #[Encrypted]
-    #[ORM\Column(type:"string", nullable: true)]
+    #[ORM\Column(type: 'string', nullable: true)]
     private $secret;
 
     /**
      * @ORM\Column(type="string", nullable=true)
      */
-    #[ORM\Column(type:"string", nullable: true)]
+    #[ORM\Column(type: 'string', nullable: true)]
     private $notSecret;
 
     /**
@@ -42,7 +45,7 @@ class Owner
      *     targetEntity="Ambta\DoctrineEncryptBundle\Tests\Functional\fixtures\Entity\CascadeTarget",
      *     cascade={"persist"})
      */
-    #[ORM\OneToOne(targetEntity: \Ambta\DoctrineEncryptBundle\Tests\Functional\fixtures\Entity\CascadeTarget::class,cascade: ['persist'])]
+    #[ORM\OneToOne(targetEntity: CascadeTarget::class, cascade: ['persist'])]
     private $cascaded;
 
     public function getId()
@@ -60,36 +63,23 @@ class Owner
         $this->secret = $secret;
     }
 
-    /**
-     * @return mixed
-     */
     public function getNotSecret()
     {
         return $this->notSecret;
     }
 
-    /**
-     * @param mixed $notSecret
-     */
     public function setNotSecret($notSecret)
     {
         $this->notSecret = $notSecret;
     }
 
-    /**
-     * @return mixed
-     */
     public function getCascaded()
     {
         return $this->cascaded;
     }
 
-    /**
-     * @param mixed $cascaded
-     */
     public function setCascaded($cascaded)
     {
         $this->cascaded = $cascaded;
     }
-
 }

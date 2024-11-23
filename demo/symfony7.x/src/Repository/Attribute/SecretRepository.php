@@ -13,7 +13,6 @@ if (!interface_exists('\Doctrine\Common\Persistence\ManagerRegistry')) {
     );
 }
 
-
 if (PHP_VERSION_ID >= 80000) {
     /**
      * @method Secret|null find($id, $lockMode = null, $lockVersion = null)
@@ -29,7 +28,7 @@ if (PHP_VERSION_ID >= 80000) {
     }
 } else {
     /**
-     * Dummy-repository for php < 8.0
+     * Dummy-repository for php < 8.0.
      */
     class SecretRepository
     {
@@ -43,12 +42,12 @@ if (PHP_VERSION_ID >= 80000) {
             return null;
         }
 
-        public function findOneBy(array $criteria, array $orderBy = null)
+        public function findOneBy(array $criteria, ?array $orderBy = null)
         {
             return null;
         }
 
-        public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+        public function findBy(array $criteria, ?array $orderBy = null, $limit = null, $offset = null)
         {
             return [];
         }

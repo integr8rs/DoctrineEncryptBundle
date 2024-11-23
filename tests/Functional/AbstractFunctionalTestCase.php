@@ -1,11 +1,8 @@
 <?php
 
-
 namespace Ambta\DoctrineEncryptBundle\Tests\Functional;
 
-
 use Ambta\DoctrineEncryptBundle\Encryptors\EncryptorInterface;
-use Ambta\DoctrineEncryptBundle\Encryptors\HaliteEncryptor;
 use Ambta\DoctrineEncryptBundle\Mapping\AttributeAnnotationReader;
 use Ambta\DoctrineEncryptBundle\Mapping\AttributeReader;
 use Ambta\DoctrineEncryptBundle\Subscribers\DoctrineEncryptSubscriber;
@@ -21,7 +18,6 @@ use Doctrine\ORM\Tools\Setup;
 use PHPUnit\Framework\Constraint\LogicalNot;
 use PHPUnit\Framework\Constraint\StringContains;
 use PHPUnit\Framework\TestCase;
-use PHPUnit\Util\InvalidArgumentHelper;
 use Symfony\Bridge\Doctrine\Middleware\Debug\DebugDataHolder;
 
 abstract class AbstractFunctionalTestCase extends TestCase
@@ -40,7 +36,6 @@ abstract class AbstractFunctionalTestCase extends TestCase
     protected $debugDataHolder;
 
     abstract protected function getEncryptor(): EncryptorInterface;
-
 
     public function setUp(): void
     {
@@ -62,7 +57,7 @@ abstract class AbstractFunctionalTestCase extends TestCase
         $useSimpleAnnotationReader = false;
 
         $config = Setup::createAnnotationMetadataConfiguration(
-            array(__DIR__ . "/fixtures/Entity"),
+            [__DIR__.'/fixtures/Entity'],
             $isDevMode,
             $proxyDir,
             $cache,
@@ -71,10 +66,10 @@ abstract class AbstractFunctionalTestCase extends TestCase
 
         // database configuration parameters
         $this->dbFile = tempnam(sys_get_temp_dir(), 'amb_db');
-        $conn = array(
+        $conn         = [
             'driver' => 'pdo_sqlite',
             'path'   => $this->dbFile,
-        );
+        ];
 
         // obtaining the entity manager
         $this->entityManager = EntityManager::create($conn, $config);
@@ -90,10 +85,10 @@ abstract class AbstractFunctionalTestCase extends TestCase
         $this->sqlLoggerStack = new DebugStack();
         $this->entityManager->getConnection()->getConfiguration()->setSQLLogger($this->sqlLoggerStack);
 
-        $this->encryptor = $this->getEncryptor();
+        $this->encryptor          = $this->getEncryptor();
         $annotationCacheDirectory = __DIR__.'/cache';
-        $this->createNewCacheDirectory ($annotationCacheDirectory);
-        $annotationReader = new AttributeAnnotationReader (new AttributeReader(), new AnnotationReader(), $annotationCacheDirectory);
+        $this->createNewCacheDirectory($annotationCacheDirectory);
+        $annotationReader = new AttributeAnnotationReader(new AttributeReader(), new AnnotationReader(), $annotationCacheDirectory);
         $this->subscriber = new DoctrineEncryptSubscriber($annotationReader, $this->encryptor);
         $this->entityManager->getEventManager()->addEventSubscriber($this->subscriber);
 
@@ -103,12 +98,12 @@ abstract class AbstractFunctionalTestCase extends TestCase
     public function setUpPHP8(): void
     {
         // Create a simple "default" Doctrine ORM configuration for Annotations
-        $isDevMode                 = true;
-        $proxyDir                  = null;
-        $cache                     = null;
+        $isDevMode = true;
+        $proxyDir  = null;
+        $cache     = null;
 
         $config = ORMSetup::createAttributeMetadataConfiguration(
-            array(__DIR__ . "/fixtures/Entity"),
+            [__DIR__.'/fixtures/Entity'],
             $isDevMode,
             $proxyDir,
             $cache
@@ -121,10 +116,10 @@ abstract class AbstractFunctionalTestCase extends TestCase
 
         // database configuration parameters
         $this->dbFile = tempnam(sys_get_temp_dir(), 'amb_db');
-        $conn = array(
+        $conn         = [
             'driver' => 'pdo_sqlite',
             'path'   => $this->dbFile,
-        );
+        ];
 
         // obtaining the entity manager
         $this->entityManager = new EntityManager(DriverManager::getConnection($conn, $config), $config);
@@ -134,9 +129,9 @@ abstract class AbstractFunctionalTestCase extends TestCase
         $schemaTool->dropSchema($classes);
         $schemaTool->createSchema($classes);
 
-        $this->encryptor = $this->getEncryptor();
+        $this->encryptor          = $this->getEncryptor();
         $annotationCacheDirectory = __DIR__.'/cache';
-        $this->createNewCacheDirectory ($annotationCacheDirectory);
+        $this->createNewCacheDirectory($annotationCacheDirectory);
         $this->subscriber = new DoctrineEncryptSubscriber(new AttributeReader(), $this->encryptor);
         $this->entityManager->getEventManager()->addEventSubscriber($this->subscriber);
 
@@ -149,22 +144,21 @@ abstract class AbstractFunctionalTestCase extends TestCase
         unlink($this->dbFile);
     }
 
-    protected function createNewCacheDirectory (string $annotationCacheDirectory): void
+    protected function createNewCacheDirectory(string $annotationCacheDirectory): void
     {
-        $this->recurseRmdir ($annotationCacheDirectory);
-        mkdir ($annotationCacheDirectory);
+        $this->recurseRmdir($annotationCacheDirectory);
+        mkdir($annotationCacheDirectory);
     }
 
-    protected function recurseRmdir ($dir): bool
+    protected function recurseRmdir($dir): bool
     {
         $contents = scandir($dir);
-        if (is_array ($contents))
-        {
-            $files = array_diff ($contents, array('.','..'));
-            foreach ($files as $file)
-            {
+        if (is_array($contents)) {
+            $files = array_diff($contents, ['.', '..']);
+            foreach ($files as $file) {
                 (is_dir("$dir/$file") && !is_link("$dir/$file")) ? $this->recurseRmdir("$dir/$file") : unlink("$dir/$file");
             }
+
             return rmdir($dir);
         }
 
@@ -173,8 +167,6 @@ abstract class AbstractFunctionalTestCase extends TestCase
 
     /**
      * Get all queries.
-     *
-     * @return array
      */
     protected function getAllDebugQueries(): array
     {
@@ -191,15 +183,13 @@ abstract class AbstractFunctionalTestCase extends TestCase
      * Get all queries, except ones containing the word 'SAVEPOINT'.
      *
      * The use of savepoints changes between different versions of doctrine/dbal, so let's ignore those.
-     *
-     * @return array
      */
     protected function getDebugQueries(): array
     {
         return array_filter(
             $this->getAllDebugQueries(),
-            static function($queryData) {
-                return stripos($queryData['sql'], 'SAVEPOINT') === FALSE;
+            static function ($queryData) {
+                return stripos($queryData['sql'], 'SAVEPOINT') === false;
             }
         );
     }
@@ -215,7 +205,7 @@ abstract class AbstractFunctionalTestCase extends TestCase
 
     protected function getLatestUpdateQuery(): ?array
     {
-        $updateQueries = array_values(array_filter($this->getDebugQueries(),static function ($queryData) {
+        $updateQueries = array_values(array_filter($this->getDebugQueries(), static function ($queryData) {
             return stripos($queryData['sql'], 'UPDATE ') === 0;
         }));
 
@@ -242,15 +232,14 @@ abstract class AbstractFunctionalTestCase extends TestCase
     /**
      * Asserts that a string starts with a given prefix.
      *
-     * @param string $stringn
      * @param string $string
      * @param string $message
      */
     public function assertStringDoesNotContain($needle, $string, $ignoreCase = false, $message = ''): void
     {
-        $this->assertIsString($needle,$message);
-        $this->assertIsString($string,$message);
-        $this->assertIsBool($ignoreCase,$message);
+        $this->assertIsString($needle, $message);
+        $this->assertIsString($string, $message);
+        $this->assertIsBool($ignoreCase, $message);
 
         $constraint = new LogicalNot(new StringContains(
             $needle,

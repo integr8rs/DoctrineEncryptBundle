@@ -12,16 +12,13 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 
 /**
- * Decrypt whole database on tables which are encrypted
+ * Decrypt whole database on tables which are encrypted.
  *
  * @author Marcel van Nuil <marcel@ambta.com>
  * @author Michael Feinbier <michael@feinbier.net>
  */
 class DoctrineDecryptDatabaseCommand extends AbstractCommand
 {
-    /**
-     * {@inheritdoc}
-     */
     protected function configure(): void
     {
         $this
@@ -32,9 +29,6 @@ class DoctrineDecryptDatabaseCommand extends AbstractCommand
             ->addOption('answer', null, InputOption::VALUE_OPTIONAL, 'The answer for the interactive question. When specified the question is skipped and the supplied answer given. Anything except y/yes will be seen as no');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         // Get entity manager, question helper, subscriber service and annotation reader
@@ -42,13 +36,13 @@ class DoctrineDecryptDatabaseCommand extends AbstractCommand
 
         // Get list of supported encryptors
         $supportedExtensions = DoctrineEncryptExtension::SupportedEncryptorClasses;
-        $batchSize = $input->getArgument('batchSize');
+        $batchSize           = $input->getArgument('batchSize');
 
         // If encryptor has been set use that encryptor else use default
         if ($input->getArgument('encryptor')) {
             if (isset($supportedExtensions[$input->getArgument('encryptor')])) {
                 $reflection = new \ReflectionClass($supportedExtensions[$input->getArgument('encryptor')]);
-                $encryptor = $reflection->newInstance();
+                $encryptor  = $reflection->newInstance();
                 $this->subscriber->setEncryptor($encryptor);
             } else {
                 if (class_exists($input->getArgument('encryptor'))) {
@@ -56,7 +50,7 @@ class DoctrineDecryptDatabaseCommand extends AbstractCommand
                 } else {
                     $output->writeln('Given encryptor does not exists');
 
-                    $output->writeln('Supported encryptors: ' . implode(', ', array_keys($supportedExtensions)));
+                    $output->writeln('Supported encryptors: '.implode(', ', array_keys($supportedExtensions)));
 
                     return defined('AbstractCommand::INVALID') ? AbstractCommand::INVALID : 2;
                 }
@@ -78,19 +72,19 @@ class DoctrineDecryptDatabaseCommand extends AbstractCommand
         }
 
         $defaultAnswer = false;
-        $answer = $input->getOption('answer');
+        $answer        = $input->getOption('answer');
         if ($answer) {
-            $input->setInteractive (false);
+            $input->setInteractive(false);
             if ($answer === 'y' || $answer === 'yes') {
                 $defaultAnswer = true;
             }
         }
 
         $confirmationQuestion = new ConfirmationQuestion(
-            '<question>' . count($metaDataArray) . ' entities found which are containing ' . $propertyCount . ' properties with the encryption tag. ' . PHP_EOL . '' .
-            'Which are going to be decrypted with [' . get_class($this->subscriber->getEncryptor()) . ']. ' . PHP_EOL . '' .
-            'Wrong settings can mess up your data and it will be unrecoverable. ' . PHP_EOL . '' .
-            'I advise you to make <bg=yellow;options=bold>a backup</bg=yellow;options=bold>. ' . PHP_EOL . '' .
+            '<question>'.count($metaDataArray).' entities found which are containing '.$propertyCount.' properties with the encryption tag. '.PHP_EOL.''.
+            'Which are going to be decrypted with ['.get_class($this->subscriber->getEncryptor()).']. '.PHP_EOL.''.
+            'Wrong settings can mess up your data and it will be unrecoverable. '.PHP_EOL.''.
+            'I advise you to make <bg=yellow;options=bold>a backup</bg=yellow;options=bold>. '.PHP_EOL.''.
             'Continue with this action? (y/yes)</question>', $defaultAnswer
         );
 
@@ -99,14 +93,14 @@ class DoctrineDecryptDatabaseCommand extends AbstractCommand
         }
 
         // Start decrypting database
-        $output->writeln('' . PHP_EOL . 'Decrypting all fields. This can take up to several minutes depending on the database size.');
+        $output->writeln(''.PHP_EOL.'Decrypting all fields. This can take up to several minutes depending on the database size.');
 
         $valueCounter = 0;
 
         // Loop through entity manager meta data
         foreach ($this->getEncryptionableEntityMetaData() as $metaData) {
-            $i = 0;
-            $iterator = $this->getEntityIterator($metaData->name);
+            $i          = 0;
+            $iterator   = $this->getEntityIterator($metaData->name);
             $totalCount = $this->getTableCount($metaData->name);
 
             $output->writeln(sprintf('Processing <comment>%s</comment>', $metaData->name));
@@ -117,21 +111,21 @@ class DoctrineDecryptDatabaseCommand extends AbstractCommand
                 // Create reflectionClass for each entity
                 $entityReflectionClass = new \ReflectionClass($entity);
 
-                //Get the current encryptor used
+                // Get the current encryptor used
                 $encryptorUsed = $this->subscriber->getEncryptor();
 
-                //Loop through the property's in the entity
+                // Loop through the property's in the entity
                 foreach ($this->getEncryptionableProperties($metaData) as $property) {
                     $methodeName = ucfirst($property->getName());
 
-                    $getter = 'get' . $methodeName;
-                    $setter = 'set' . $methodeName;
+                    $getter = 'get'.$methodeName;
+                    $setter = 'set'.$methodeName;
 
-                    //Check if getter and setter are set
+                    // Check if getter and setter are set
                     if ($entityReflectionClass->hasMethod($getter) && $entityReflectionClass->hasMethod($setter)) {
                         $unencrypted = $entity->$getter();
                         $entity->$setter($unencrypted);
-                        $valueCounter++;
+                        ++$valueCounter;
                     }
                 }
 
@@ -143,11 +137,10 @@ class DoctrineDecryptDatabaseCommand extends AbstractCommand
                     $this->entityManager->clear();
                 }
                 $progressBar->advance(1);
-                $i++;
+                ++$i;
 
                 $this->subscriber->setEncryptor($encryptorUsed);
             }
-
 
             $progressBar->finish();
             $output->writeln('');
@@ -158,7 +151,7 @@ class DoctrineDecryptDatabaseCommand extends AbstractCommand
             $this->subscriber->setEncryptor($encryptorUsed);
         }
 
-        $output->writeln('' . PHP_EOL . 'Decryption finished values found: <info>' . $valueCounter . '</info>, decrypted: <info>' . $this->subscriber->decryptCounter . '</info>.' . PHP_EOL . 'All values are now decrypted.');
+        $output->writeln(''.PHP_EOL.'Decryption finished values found: <info>'.$valueCounter.'</info>, decrypted: <info>'.$this->subscriber->decryptCounter.'</info>.'.PHP_EOL.'All values are now decrypted.');
 
         return defined('AbstractCommand::SUCCESS') ? AbstractCommand::SUCCESS : 0;
     }

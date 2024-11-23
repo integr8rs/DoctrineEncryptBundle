@@ -8,6 +8,7 @@ class ExtendedUser extends User
 {
     /**
      * @var string
+     *
      * @Encrypted()
      */
     public $extra;

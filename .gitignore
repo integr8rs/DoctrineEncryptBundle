@@ -1,6 +1,7 @@
 .idea/
 /composer.lock
 /vendor
-.phpunit.result.cache
-.phpstan-cache/
+/.phpunit.result.cache
+/.php-cs-fixer.cache
+/.phpstan-cache/
 /tests/Functional/cache

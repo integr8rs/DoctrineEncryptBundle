@@ -15,7 +15,7 @@ class DefaultController extends AbstractController
      */
     public function index(
         \App\Repository\Annotation\SecretRepository $secretUsingAnnotationRepository,
-        \App\Repository\Attribute\SecretRepository  $secretUsingAttributesRepository
+        \App\Repository\Attribute\SecretRepository $secretUsingAttributesRepository
     ): Response {
         $secrets = array_merge(
             $secretUsingAnnotationRepository->findAll(),
@@ -37,7 +37,7 @@ class DefaultController extends AbstractController
         $type = $request->query->get('type');
         if ($type === 'annotation') {
             $secret = new \App\Entity\Annotation\Secret();
-        } elseif($type === 'attribute') {
+        } elseif ($type === 'attribute') {
             $secret = new \App\Entity\Attribute\Secret();
         } else {
             return new Response('Type is only allowed to be "annotation" or "attribute"');

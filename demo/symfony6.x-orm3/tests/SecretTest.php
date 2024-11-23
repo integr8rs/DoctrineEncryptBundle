@@ -24,7 +24,7 @@ class SecretTest extends KernelTestCase
         // Make sure we do not store testdata
         $entityManager->beginTransaction();
 
-        $name = 'test123';
+        $name         = 'test123';
         $secretString = 'i am a secret string';
 
         // Create entity to test with
@@ -37,22 +37,22 @@ class SecretTest extends KernelTestCase
 
         // Fetch the actual data
         $secretRepository = $entityManager->getRepository(Secret::class);
-        $qb = $secretRepository->createQueryBuilder('s');
+        $qb               = $secretRepository->createQueryBuilder('s');
         $qb->select('s')
             ->addSelect('(s.secret) as rawSecret')
             ->where('s.name = :name')
-            ->setParameter('name',$name)
-            ->orderBy('s.name','ASC');
+            ->setParameter('name', $name)
+            ->orderBy('s.name', 'ASC');
         $result = $qb->getQuery()->getSingleResult();
 
         $actualSecretObject = $result[0];
-        $actualRawSecret = $result['rawSecret'];
+        $actualRawSecret    = $result['rawSecret'];
 
-        self::assertInstanceOf(Secret::class,$actualSecretObject);
+        self::assertInstanceOf(Secret::class, $actualSecretObject);
         self::assertEquals($newSecretObject->getSecret(), $actualSecretObject->getSecret());
         self::assertEquals($newSecretObject->getName(), $actualSecretObject->getName());
         // Make sure it is encrypted
-        self::assertNotEquals($newSecretObject->getSecret(),$actualRawSecret);
-        self::assertStringEndsWith(DoctrineEncryptSubscriber::ENCRYPTION_MARKER,$actualRawSecret);
+        self::assertNotEquals($newSecretObject->getSecret(), $actualRawSecret);
+        self::assertStringEndsWith(DoctrineEncryptSubscriber::ENCRYPTION_MARKER, $actualRawSecret);
     }
 }

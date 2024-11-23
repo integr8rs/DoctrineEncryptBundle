@@ -36,8 +36,8 @@ class SecretFactory
      */
     public function getSecret(string $className)
     {
-        if (!in_array($className,DoctrineEncryptExtension::SupportedEncryptorClasses)) {
-            throw new \RuntimeException(sprintf('Class "%s" is not supported by %s',$className,self::class));
+        if (!in_array($className, DoctrineEncryptExtension::SupportedEncryptorClasses)) {
+            throw new \RuntimeException(sprintf('Class "%s" is not supported by %s', $className, self::class));
         }
 
         if ($className === HaliteEncryptor::class) {
@@ -54,22 +54,21 @@ class SecretFactory
                     throw new \RuntimeException('Creation of secrets is not enabled');
                 }
 
-                return $this->createSecret($secretPath,$className);
+                return $this->createSecret($secretPath, $className);
             } catch (\Throwable $e) {
-                throw new \RuntimeException(sprintf('DoctrineEncryptBundle: Unable to create secret "%s"',$secretPath),$e->getCode(),$e);
+                throw new \RuntimeException(sprintf('DoctrineEncryptBundle: Unable to create secret "%s"', $secretPath), $e->getCode(), $e);
             }
-
         }
 
         if (!is_readable($secretPath) || ($secret = file_get_contents($secretPath)) === false) {
-            throw new \RuntimeException(sprintf('DoctrineEncryptBundle: Unable to read secret "%s"',$secretPath));
+            throw new \RuntimeException(sprintf('DoctrineEncryptBundle: Unable to read secret "%s"', $secretPath));
         }
 
         return $secret;
     }
 
     /**
-     * Generate a new secret and store it on the filesystem
+     * Generate a new secret and store it on the filesystem.
      *
      * @param string $secretPath Where to store the secret
      * @param string $className  Which type of secret to generate

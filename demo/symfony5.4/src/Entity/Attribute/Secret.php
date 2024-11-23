@@ -6,21 +6,20 @@ use Ambta\DoctrineEncryptBundle\Configuration\Encrypted;
 use App\Repository\Attribute\SecretRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Table(name:"secrets_using_attributes")]
-#[ORM\Entity(repositoryClass:SecretRepository::class)]
+#[ORM\Table(name: 'secrets_using_attributes')]
+#[ORM\Entity(repositoryClass: SecretRepository::class)]
 class Secret implements \App\Entity\SecretInterface
 {
     #[ORM\Id()]
-    #[ORM\Column(type:"string", nullable:false)]
+    #[ORM\Column(type: 'string', nullable: false)]
     private $name;
 
-
-    #[ORM\Column(type:"string", nullable:false)]
+    #[ORM\Column(type: 'string', nullable: false)]
     #[Encrypted]
     private $secret;
 
     /**
-     * Used to fill in value from repo
+     * Used to fill in value from repo.
      *
      * @var string
      */
@@ -32,7 +31,7 @@ class Secret implements \App\Entity\SecretInterface
     }
 
     /**
-     * return mixed
+     * return mixed.
      */
     public function getName()
     {
@@ -80,8 +79,6 @@ class Secret implements \App\Entity\SecretInterface
     }
 
     /**
-     * @param mixed $rawSecret
-     *
      * @return $this
      */
     public function setRawSecret($rawSecret)

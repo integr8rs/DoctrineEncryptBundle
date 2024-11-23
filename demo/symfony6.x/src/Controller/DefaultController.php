@@ -14,14 +14,14 @@ class DefaultController extends AbstractController
      * @Route(name="home", path="/")
      */
     public function index(\App\Repository\Annotation\SecretRepository $secretUsingAnnotationRepository,
-                          \App\Repository\Attribute\SecretRepository  $secretUsingAttributesRepository): Response
+        \App\Repository\Attribute\SecretRepository $secretUsingAttributesRepository): Response
     {
         $secrets = array_merge(
             $secretUsingAnnotationRepository->findAll(),
             $secretUsingAttributesRepository->findAll()
         );
 
-        return $this->render('index.html.twig',['secrets' => $secrets]);
+        return $this->render('index.html.twig', ['secrets' => $secrets]);
     }
 
     /**
@@ -36,7 +36,7 @@ class DefaultController extends AbstractController
         $type = $request->query->get('type');
         if ($type === 'annotation') {
             $secret = new \App\Entity\Annotation\Secret();
-        } elseif($type === 'attribute') {
+        } elseif ($type === 'attribute') {
             $secret = new \App\Entity\Attribute\Secret();
         } else {
             return new Response('Type is only allowed to be "annotation" or "attribute"');
@@ -49,6 +49,6 @@ class DefaultController extends AbstractController
         $em->persist($secret);
         $em->flush();
 
-        return new Response(sprintf('OK - secret %s stored',$secret->getName()));
+        return new Response(sprintf('OK - secret %s stored', $secret->getName()));
     }
 }

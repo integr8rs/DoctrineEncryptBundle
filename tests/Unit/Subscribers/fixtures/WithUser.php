@@ -9,6 +9,7 @@ class WithUser
 {
     /**
      * @var string
+     *
      * @Encrypted()
      */
     public $name;
@@ -20,6 +21,7 @@ class WithUser
 
     /**
      * @var User
+     *
      * @ORM\Embedded()
      */
     public $user;
@@ -27,7 +29,7 @@ class WithUser
     public function __construct(string $name, string $foo, User $user)
     {
         $this->name = $name;
-        $this->foo = $foo;
+        $this->foo  = $foo;
         $this->user = $user;
     }
 }

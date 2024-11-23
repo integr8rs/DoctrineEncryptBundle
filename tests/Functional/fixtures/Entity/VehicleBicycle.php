@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Ambta\DoctrineEncryptBundle\Tests\Functional\fixtures\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -13,9 +12,10 @@ class VehicleBicycle extends AbstractVehicle
 {
     /**
      * @ORM\Column(type="boolean")
+     *
      * @var bool
      */
-    #[ORM\Column(type:'boolean')]
+    #[ORM\Column(type: 'boolean')]
     private $hasSidewheels = false;
 
     /**
@@ -28,11 +28,13 @@ class VehicleBicycle extends AbstractVehicle
 
     /**
      * @param bool $hasSidewheels
+     *
      * @return $this
      */
     public function setSidewheels($hasSidewheels): self
     {
         $this->hasSidewheels = $hasSidewheels;
+
         return $this;
     }
 }

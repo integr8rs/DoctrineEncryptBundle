@@ -11,16 +11,13 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 
 /**
- * Batch encryption for the database
+ * Batch encryption for the database.
  *
  * @author Marcel van Nuil <marcel@ambta.com>
  * @author Michael Feinbier <michael@feinbier.net>
  */
 class DoctrineEncryptDatabaseCommand extends AbstractCommand
 {
-    /**
-     * {@inheritdoc}
-     */
     protected function configure(): void
     {
         $this
@@ -31,13 +28,10 @@ class DoctrineEncryptDatabaseCommand extends AbstractCommand
             ->addOption('answer', null, InputOption::VALUE_OPTIONAL, 'The answer for the interactive question. When specified the question is skipped and the supplied answer given. Anything except y/yes will be seen as no');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         // Get entity manager, question helper, subscriber service and annotation reader
-        $question = $this->getHelper('question');
+        $question  = $this->getHelper('question');
         $batchSize = $input->getArgument('batchSize');
 
         // Get list of supported encryptors
@@ -47,7 +41,7 @@ class DoctrineEncryptDatabaseCommand extends AbstractCommand
         if ($input->getArgument('encryptor')) {
             if (isset($supportedExtensions[$input->getArgument('encryptor')])) {
                 $reflection = new \ReflectionClass($supportedExtensions[$input->getArgument('encryptor')]);
-                $encryptor = $reflection->newInstance();
+                $encryptor  = $reflection->newInstance();
                 $this->subscriber->setEncryptor($encryptor);
             } else {
                 if (class_exists($input->getArgument('encryptor'))) {
@@ -55,7 +49,7 @@ class DoctrineEncryptDatabaseCommand extends AbstractCommand
                 } else {
                     $output->writeln('Given encryptor does not exists');
 
-                    $output->writeln('Supported encryptors: ' . implode(', ', array_keys($supportedExtensions)));
+                    $output->writeln('Supported encryptors: '.implode(', ', array_keys($supportedExtensions)));
 
                     return defined('AbstractCommand::INVALID') ? AbstractCommand::INVALID : 2;
                 }
@@ -63,21 +57,21 @@ class DoctrineEncryptDatabaseCommand extends AbstractCommand
         }
 
         $defaultAnswer = false;
-        $answer = $input->getOption('answer');
+        $answer        = $input->getOption('answer');
         if ($answer) {
-            $input->setInteractive (false);
+            $input->setInteractive(false);
             if ($answer === 'y' || $answer === 'yes') {
                 $defaultAnswer = true;
             }
         }
 
         // Get entity manager metadata
-        $metaDataArray = $this->getEncryptionableEntityMetaData();
+        $metaDataArray        = $this->getEncryptionableEntityMetaData();
         $confirmationQuestion = new ConfirmationQuestion(
-            '<question>' . count($metaDataArray) . ' entities found which are containing properties with the encryption tag.' . PHP_EOL . '' .
-            'Which are going to be encrypted with [' . get_class($this->subscriber->getEncryptor()) . ']. ' . PHP_EOL . ''.
-            'Wrong settings can mess up your data and it will be unrecoverable. ' . PHP_EOL . '' .
-            'I advise you to make <bg=yellow;options=bold>a backup</bg=yellow;options=bold>. ' . PHP_EOL . '' .
+            '<question>'.count($metaDataArray).' entities found which are containing properties with the encryption tag.'.PHP_EOL.''.
+            'Which are going to be encrypted with ['.get_class($this->subscriber->getEncryptor()).']. '.PHP_EOL.''.
+            'Wrong settings can mess up your data and it will be unrecoverable. '.PHP_EOL.''.
+            'I advise you to make <bg=yellow;options=bold>a backup</bg=yellow;options=bold>. '.PHP_EOL.''.
             'Continue with this action? (y/yes)</question>', $defaultAnswer
         );
 
@@ -86,12 +80,12 @@ class DoctrineEncryptDatabaseCommand extends AbstractCommand
         }
 
         // Start decrypting database
-        $output->writeln('' . PHP_EOL . 'Encrypting all fields can take up to several minutes depending on the database size.');
+        $output->writeln(''.PHP_EOL.'Encrypting all fields can take up to several minutes depending on the database size.');
 
         // Loop through entity manager meta data
         foreach ($metaDataArray as $metaData) {
-            $i = 0;
-            $iterator = $this->getEntityIterator($metaData->name);
+            $i          = 0;
+            $iterator   = $this->getEntityIterator($metaData->name);
             $totalCount = $this->getTableCount($metaData->name);
 
             $output->writeln(sprintf('Processing <comment>%s</comment>', $metaData->name));
@@ -106,7 +100,7 @@ class DoctrineEncryptDatabaseCommand extends AbstractCommand
                     $this->entityManager->clear();
                     $progressBar->advance($batchSize);
                 }
-                $i++;
+                ++$i;
             }
 
             $progressBar->finish();
@@ -115,10 +109,8 @@ class DoctrineEncryptDatabaseCommand extends AbstractCommand
         }
 
         // Say it is finished
-        $output->writeln('Encryption finished. Values encrypted: <info>' . $this->subscriber->encryptCounter . ' values</info>.' . PHP_EOL . 'All values are now encrypted.');
+        $output->writeln('Encryption finished. Values encrypted: <info>'.$this->subscriber->encryptCounter.' values</info>.'.PHP_EOL.'All values are now encrypted.');
 
         return defined('AbstractCommand::SUCCESS') ? AbstractCommand::SUCCESS : 0;
     }
-
-
 }
