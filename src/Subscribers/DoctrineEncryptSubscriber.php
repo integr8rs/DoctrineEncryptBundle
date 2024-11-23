@@ -310,7 +310,7 @@ class DoctrineEncryptSubscriber implements EventSubscriber
         } catch (DoctrineEncryptBundleException $e) {
             throw $e;
         } catch (\Throwable $e) {
-            if (DoctrineEncryptExtension::$wrapExceptions) {
+            if (DoctrineEncryptExtension::wrapExceptions()) {
                 throw new DoctrineEncryptBundleException('Something went wrong encrypting/decrypting a secret', 0, $e);
             }
             throw $e;

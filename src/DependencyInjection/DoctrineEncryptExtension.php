@@ -6,8 +6,8 @@ use Ambta\DoctrineEncryptBundle\Encryptors\DefuseEncryptor;
 use Ambta\DoctrineEncryptBundle\Encryptors\HaliteEncryptor;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Extension\Extension;
 use Symfony\Component\DependencyInjection\Loader;
-use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\Component\HttpKernel\Kernel;
 
 /**
@@ -24,7 +24,19 @@ class DoctrineEncryptExtension extends Extension
      *
      * @internal
      */
-    public static $wrapExceptions = false;
+    private static $wrapExceptions = false;
+
+    /**
+     * @internal
+     */
+    public static function wrapExceptions(?bool $wrapExceptions = null): bool
+    {
+        if ($wrapExceptions !== null) {
+            self::$wrapExceptions = $wrapExceptions;
+        }
+
+        return self::$wrapExceptions;
+    }
 
     public const SupportedEncryptorClasses = [
         'Defuse' => DefuseEncryptor::class,
@@ -33,9 +45,7 @@ class DoctrineEncryptExtension extends Extension
 
     public function load(array $configs, ContainerBuilder $container): void
     {
-        // Create configuration object
-        $configuration = new Configuration();
-        $config        = $this->processConfiguration($configuration, $configs);
+        $config = $this->processConfiguration(new Configuration($this->getAlias()), $configs);
 
         // If empty encryptor class, use Halite encryptor
         if (array_key_exists($config['encryptor_class'], self::SupportedEncryptorClasses)) {
@@ -46,11 +56,15 @@ class DoctrineEncryptExtension extends Extension
 
         // Set parameters
         $container->setParameter('ambta_doctrine_encrypt.encryptor_class_name', $config['encryptor_class_full']);
-        $container->setParameter('ambta_doctrine_encrypt.secret_directory_path', $config['secret_directory_path']);
-        $container->setParameter('ambta_doctrine_encrypt.enable_secret_generation', $config['enable_secret_generation']);
 
         if (isset($config['secret'])) {
             $container->setParameter('ambta_doctrine_encrypt.secret', $config['secret']);
+        } else {
+            $container->setParameter(
+                'ambta_doctrine_encrypt.enable_secret_generation',
+                $config['enable_secret_generation']
+            );
+            $container->setParameter('ambta_doctrine_encrypt.secret_directory_path', $config['secret_directory_path']);
         }
 
         // Load service file
@@ -77,7 +91,11 @@ class DoctrineEncryptExtension extends Extension
             // PHP 8.x (annotations and attributes)
             } else {
                 // Doctrine 3.0 - no annotations
-                if (\Composer\InstalledVersions::satisfies(new \Composer\Semver\VersionParser(), 'doctrine/orm', '^3.0')) {
+                if (\Composer\InstalledVersions::satisfies(
+                    new \Composer\Semver\VersionParser(),
+                    'doctrine/orm',
+                    '^3.0'
+                )) {
                     $loader->load('service_listeners_with_attributes.yml');
                 } else {
                     $loader->load('services_subscriber_with_annotations_and_attributes.yml');
@@ -90,7 +108,7 @@ class DoctrineEncryptExtension extends Extension
 
         // Wrap exceptions
         if ($config['wrap_exceptions']) {
-            self::$wrapExceptions = true;
+            self::wrapExceptions(true);
         } else {
             trigger_deprecation(
                 'doctrineencryptbundle/doctrine-encrypt-bundle',
@@ -108,6 +126,6 @@ EOF
      */
     public function getAlias(): string
     {
-        return 'ambta_doctrine_encrypt';
+        return 'doctrine_encrypt_bundle';
     }
 }

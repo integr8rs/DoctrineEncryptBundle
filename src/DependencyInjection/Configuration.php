@@ -14,15 +14,25 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
  */
 class Configuration implements ConfigurationInterface
 {
+    /**
+     * @var string
+     */
+    private $rootName;
+
+    public function __construct($rootName)
+    {
+        $this->rootName = $rootName;
+    }
+
     public function getConfigTreeBuilder(): TreeBuilder
     {
         // Create tree builder
-        $treeBuilder = new TreeBuilder('ambta_doctrine_encrypt');
+        $treeBuilder = new TreeBuilder($this->rootName);
         if (\method_exists($treeBuilder, 'getRootNode')) {
             $rootNode = $treeBuilder->getRootNode();
         } else {
             // BC layer for symfony/config 4.1 and older
-            $rootNode = $treeBuilder->root('ambta_doctrine_encrypt');
+            $rootNode = $treeBuilder->root($this->rootName);
         }
 
         // Grammar of config tree
