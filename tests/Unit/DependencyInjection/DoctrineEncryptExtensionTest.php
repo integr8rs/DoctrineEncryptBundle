@@ -281,7 +281,7 @@ You can start using these exceptions today by setting \'ambta_doctrine_encrypt.w
         $extension->load([$config], $container);
 
 
-        $this->assertEquals($expectedParameters, $container->getParameterBag()->all());
+        $this->assertEqualsCanonicalizing($expectedParameters, $container->getParameterBag()->all());
 
         $expectedServiceIds = array_merge(
             array_keys($expectedServices),
