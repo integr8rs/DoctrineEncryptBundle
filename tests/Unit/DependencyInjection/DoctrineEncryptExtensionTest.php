@@ -3,6 +3,7 @@
 namespace Ambta\DoctrineEncryptBundle\Tests\Unit\DependencyInjection;
 
 use Ambta\DoctrineEncryptBundle\DependencyInjection\DoctrineEncryptExtension;
+use Ambta\DoctrineEncryptBundle\DependencyInjection\VersionTester;
 use Ambta\DoctrineEncryptBundle\Encryptors\DefuseEncryptor;
 use Ambta\DoctrineEncryptBundle\Encryptors\HaliteEncryptor;
 use ParagonIE\Halite\KeyFactory;
@@ -26,7 +27,7 @@ class DoctrineEncryptExtensionTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->extension          = new DoctrineEncryptExtension();
+        $this->extension          = new DoctrineEncryptExtension(new VersionTester());
         $this->temporaryDirectory = sys_get_temp_dir().DIRECTORY_SEPARATOR.sha1(mt_rand());
         mkdir($this->temporaryDirectory);
     }
@@ -240,8 +241,39 @@ You can start using these exceptions today by setting \'ambta_doctrine_encrypt.w
         $container = $this->createContainer();
         $config    = ['wrap_exceptions' => true];
 
+        $this->expectDeprecation('');
         $this->extension->load([$config], $container);
         $this->assertTrue(DoctrineEncryptExtension::wrapExceptions());
+    }
+
+    /**
+     * @dataProvider provideConfigLoadsCorrectServicesAndParametersCases
+     */
+    public function testConfigLoadsCorrectServicesAndParameters(
+        array $config,
+        array $mockedVersions,
+        array $expectedParameters,
+        array $expectedServices,
+    ): void
+    {
+
+    }
+
+    public static function provideConfigLoadsCorrectServicesAndParametersCases(): iterable
+    {
+        yield 'empty' => [
+            [],
+            [
+                'isSymfony7OrHigher' => false,
+                'isPhp8OrHigher' => false,
+                'doctrineOrmIsVersion3' => false,
+            ],
+            [
+                'ambta_doctrine_encrypt.encryptor_class_name' => HaliteEncryptor::class,
+                'ambta_doctrine_encrypt.enable_secret_generation' => true,
+            ],
+            [],
+        ];
     }
 
     private function createContainer(): ContainerBuilder

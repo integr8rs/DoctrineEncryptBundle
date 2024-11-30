@@ -1,62 +1,17 @@
 <?php
 
-namespace Ambta\DoctrineEncryptBundle\DependencyInjection;
+namespace DoctrineEncryptBundle\DoctrineEncryptBundle\DependencyInjection;
 
-use Ambta\DoctrineEncryptBundle\Encryptors\DefuseEncryptor;
-use Ambta\DoctrineEncryptBundle\Encryptors\HaliteEncryptor;
-use Composer\Semver\Comparator;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Extension\Extension;
 use Symfony\Component\DependencyInjection\Loader;
 use Symfony\Component\HttpKernel\Kernel;
 
 /**
- * Initialization of bundle.
- *
- * This is the class that loads and manages your bundle configuration
- *
- * To learn more see {@link http://symfony.com/doc/current/cookbook/bundles/extension.html}
+ * @internal
  */
-class DoctrineEncryptExtension extends Extension
+class DoctrineEncryptExtension extends \Ambta\DoctrineEncryptBundle\DependencyInjection\DoctrineEncryptExtension
 {
-    /**
-     * @var VersionTester
-     */
-    private $versionTester;
-
-    public function __construct(
-        VersionTester $versionTester,
-    )
-    {
-        $this->versionTester = $versionTester;
-    }
-
-
-    /**
-     * Flag to test if we should wrap exceptions by our own exceptions.
-     *
-     * @internal
-     */
-    private static $wrapExceptions = false;
-
-    /**
-     * @internal
-     */
-    public static function wrapExceptions(?bool $wrapExceptions = null): bool
-    {
-        if ($wrapExceptions !== null) {
-            self::$wrapExceptions = $wrapExceptions;
-        }
-
-        return self::$wrapExceptions;
-    }
-
-    public const SupportedEncryptorClasses = [
-        'Defuse' => DefuseEncryptor::class,
-        'Halite' => HaliteEncryptor::class,
-    ];
-
     public function load(array $configs, ContainerBuilder $container): void
     {
         $config = $this->processConfiguration(new Configuration($this->getAlias()), $configs);
@@ -98,14 +53,18 @@ class DoctrineEncryptExtension extends Extension
         }
 
         // Symfony 5-6
-        if (!$this->versionTester->isSymfony7OrHigher()) {
+        if (Kernel::MAJOR_VERSION < 7) {
             // PHP 7.x (no attributes)
-            if (!$this->versionTester->isPhp8OrHigher()) {
+            if (PHP_VERSION_ID < 80000) {
                 $loader->load('services_subscriber_with_annotations.yml');
             // PHP 8.x (annotations and attributes)
             } else {
                 // Doctrine 3.0 - no annotations
-                if ($this->versionTester->doctrineOrmIsVersion3()) {
+                if (\Composer\InstalledVersions::satisfies(
+                    new \Composer\Semver\VersionParser(),
+                    'doctrine/orm',
+                    '^3.0'
+                )) {
                     $loader->load('service_listeners_with_attributes.yml');
                 } else {
                     $loader->load('services_subscriber_with_annotations_and_attributes.yml');
