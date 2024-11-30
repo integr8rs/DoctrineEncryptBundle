@@ -36,7 +36,8 @@
 	},
 	"autoload": {
 		"psr-4": {
-			"Ambta\\DoctrineEncryptBundle\\": "src/"
+			"Ambta\\DoctrineEncryptBundle\\": "src/",
+			"DoctrineEncryptBundle\\DoctrineEncryptBundle\\": "src-new/"
 		}
 	},
 	"scripts": {

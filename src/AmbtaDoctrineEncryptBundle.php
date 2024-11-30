@@ -4,6 +4,7 @@ namespace Ambta\DoctrineEncryptBundle;
 
 use Ambta\DoctrineEncryptBundle\DependencyInjection\DeprecatedDoctrineEncryptExtension;
 use Ambta\DoctrineEncryptBundle\DependencyInjection\DoctrineEncryptExtension;
+use Ambta\DoctrineEncryptBundle\DependencyInjection\VersionTester;
 use JetBrains\PhpStorm\Pure;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
@@ -14,7 +15,7 @@ class AmbtaDoctrineEncryptBundle extends Bundle
     #[Pure]
     public function getContainerExtension(): ?ExtensionInterface
     {
-        return new DoctrineEncryptExtension();
+        return new DoctrineEncryptExtension(new VersionTester());
     }
 
     public function build(ContainerBuilder $container)
@@ -22,6 +23,6 @@ class AmbtaDoctrineEncryptBundle extends Bundle
         parent::build($container);
 
         // TODO-6.0 Remove the old extension again
-        $container->registerExtension(new DeprecatedDoctrineEncryptExtension());
+        $container->registerExtension(new DeprecatedDoctrineEncryptExtension(new VersionTester()));
     }
 }
