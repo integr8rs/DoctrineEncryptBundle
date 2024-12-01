@@ -67,12 +67,6 @@ class DoctrineEncryptExtension extends Extension
         // Load service file
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
 
-        if (!isset($config['secret'])) {
-            $loader->load('services_with_secretfactory.yml');
-        } else {
-            $loader->load('services_with_secret.yml');
-        }
-
         // Symfony 1-4
         // Sanity-check since this should be blocked by composer.json
         if (Kernel::MAJOR_VERSION < 5 || (Kernel::MAJOR_VERSION === 5 && Kernel::MINOR_VERSION < 4)) {
