@@ -5,12 +5,11 @@ declare(strict_types=1);
 namespace DoctrineEncryptBundle\DoctrineEncryptBundle\DependencyInjection;
 
 use Ambta\DoctrineEncryptBundle\DependencyInjection\DoctrineEncryptExtension;
-use Ambta\DoctrineEncryptBundle\DependencyInjection\Loader;
 use Ambta\DoctrineEncryptBundle\DependencyInjection\VersionTester;
-use Symfony\Component\Config\Definition\Configurator\DefinitionConfigurator;
-use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Parameter;
 use Symfony\Component\DependencyInjection\Reference;
+use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\HttpKernel\Kernel;
 
 /**
@@ -166,19 +165,48 @@ EOF
         }
     }
 
-    private function defineServicesUsingAnnotations(ContainerBuilder $container): void
+    private function defineServicesUsingSecret(ContainerBuilder $container): void
     {
-        
+        if (!$this->useNewNames) {
+            $container
+                ->register(
+                    'ambta_doctrine_encrypt.encryptor',
+                    '%ambta_doctrine_encrypt.encryptor_class_name%',
+                )
+                ->setArguments([
+                    new Parameter('ambta_doctrine_encrypt.secret'),
+                ])
+            ;
+        }
     }
 
     private function defineServicesUsingSecretFactory(ContainerBuilder $container): void
     {
-
+        if (!$this->useNewNames) {
+            $container
+                ->register(
+                    'ambta_doctrine_encrypt.encryptor',
+                    '%ambta_doctrine_encrypt.encryptor_class_name%',
+                )
+                ->setArguments([
+                    new Expression('service("ambta_doctrine_encrypt.secret_factory").getSecret(parameter("ambta_doctrine_encrypt.encryptor_class_name"))'),
+                ])
+            ;
+            $container
+                ->register(
+                    'ambta_doctrine_encrypt.secret_factory',
+                    \Ambta\DoctrineEncryptBundle\Factories\SecretFactory::class
+                )
+                ->setArguments([
+                    new Parameter('ambta_doctrine_encrypt.secret_directory_path'),
+                    new Parameter('ambta_doctrine_encrypt.enable_secret_generation')
+                ])
+            ;
+        }
     }
 
-    private function defineServicesUsingSecret(ContainerBuilder $container): void
+    private function defineServicesUsingAnnotations(ContainerBuilder $container): void
     {
-
     }
 
     private function defineServicesUsingAttributes(ContainerBuilder $container): void
