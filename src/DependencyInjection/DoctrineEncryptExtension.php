@@ -21,13 +21,13 @@ class DoctrineEncryptExtension extends Extension
     /**
      * @var VersionTester
      */
-    private $versionTester;
+    protected $versionTester;
 
     public function __construct(
-        VersionTester $versionTester,
+        VersionTester $versionTester = null
     )
     {
-        $this->versionTester = $versionTester;
+        $this->versionTester = $versionTester ?? new VersionTester();
     }
 
     /**
@@ -86,6 +86,6 @@ EOF
      */
     public function getAlias(): string
     {
-        return 'doctrine_encrypt_bundle';
+        return 'doctrine_encrypt';
     }
 }
