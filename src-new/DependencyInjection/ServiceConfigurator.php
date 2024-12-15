@@ -171,7 +171,7 @@ EOF
             $container
                 ->register(
                     'ambta_doctrine_encrypt.encryptor',
-                    '%ambta_doctrine_encrypt.encryptor_class_name%',
+                    '%ambta_doctrine_encrypt.encryptor_class_name%'
                 )
                 ->setArguments([
                     new Parameter('ambta_doctrine_encrypt.secret'),
@@ -186,7 +186,7 @@ EOF
             $container
                 ->register(
                     'ambta_doctrine_encrypt.encryptor',
-                    '%ambta_doctrine_encrypt.encryptor_class_name%',
+                    '%ambta_doctrine_encrypt.encryptor_class_name%'
                 )
                 ->setArguments([
                     new Expression('service("ambta_doctrine_encrypt.secret_factory").getSecret(parameter("ambta_doctrine_encrypt.encryptor_class_name"))'),
@@ -230,7 +230,7 @@ EOF
             $container
                 ->register(
                     'ambta_doctrine_attribute_reader',
-                    \Ambta\DoctrineEncryptBundle\Mapping\AttributeReader::class,
+                    \Ambta\DoctrineEncryptBundle\Mapping\AttributeReader::class
                 )
             ;
             $container->setAlias('ambta_doctrine_annotation_reader','ambta_doctrine_attribute_reader');
@@ -259,13 +259,13 @@ EOF
             $container
                 ->register(
                     'ambta_doctrine_attribute_reader',
-                    \Ambta\DoctrineEncryptBundle\Mapping\AttributeReader::class,
+                    \Ambta\DoctrineEncryptBundle\Mapping\AttributeReader::class
                 )
             ;
             $container
                 ->register(
                     'ambta_doctrine_annotation_reader',
-                    \Ambta\DoctrineEncryptBundle\Mapping\AttributeAnnotationReader::class,
+                    \Ambta\DoctrineEncryptBundle\Mapping\AttributeAnnotationReader::class
                 )
                 ->setArguments([
                     new Reference('ambta_doctrine_attribute_reader'),
