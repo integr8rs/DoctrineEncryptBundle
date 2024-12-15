@@ -58,6 +58,9 @@ Starting from 6.0, only `doctrine_encrypt_bundle` will be supported.');
         $this->assertEquals('ambta_doctrine_encrypt.yaml', $container->getParameter('ambta_doctrine_encrypt.secret'));
     }
 
+    /**
+     * @group legacy
+     */
     public function testContainerIsAbleToConfigFromNewNamespace(): void
     {
         $container = $this->createContainer();
@@ -68,10 +71,11 @@ Starting from 6.0, only `doctrine_encrypt_bundle` will be supported.');
         $bundle->build($container);
 
         $yamlLoader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../_data'));
-        $yamlLoader->load('doctrine_encrypt_bundle.yaml');
+        $yamlLoader->load('doctrine_encrypt.yaml');
 
         $container->addCompilerPass(new MergeExtensionConfigurationPass());
 
+        $this->expectDeprecation('');
         $container->compile();
 
         $this->assertTrue($container->hasParameter('ambta_doctrine_encrypt.secret'));

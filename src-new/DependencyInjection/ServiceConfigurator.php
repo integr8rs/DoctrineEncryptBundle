@@ -135,7 +135,7 @@ EOF
                 ->setArguments([
                     new Reference('doctrine.orm.entity_manager'),
                     new Reference('ambta_doctrine_annotation_reader'),
-                    new Reference('ambta_doctrine_encrypt.subscriber'),
+                    new Reference('ambta_doctrine_encrypt.orm_subscriber'),
                 ])
             ;
             $container
@@ -147,7 +147,7 @@ EOF
                 ->setArguments([
                     new Reference('doctrine.orm.entity_manager'),
                     new Reference('ambta_doctrine_annotation_reader'),
-                    new Reference('ambta_doctrine_encrypt.subscriber'),
+                    new Reference('ambta_doctrine_encrypt.orm_subscriber'),
                 ])
             ;
             $container
@@ -159,7 +159,7 @@ EOF
                 ->setArguments([
                     new Reference('doctrine.orm.entity_manager'),
                     new Reference('ambta_doctrine_annotation_reader'),
-                    new Reference('ambta_doctrine_encrypt.subscriber'),
+                    new Reference('ambta_doctrine_encrypt.orm_subscriber'),
                 ])
             ;
         }
