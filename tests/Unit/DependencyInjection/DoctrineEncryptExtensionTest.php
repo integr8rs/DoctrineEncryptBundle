@@ -257,7 +257,7 @@ You can start using these exceptions today by setting \'ambta_doctrine_encrypt.w
         array $mockedVersions,
         array $expectedParameters,
         array $expectedServices,
-        array $expectedAliases,
+        array $expectedAliases
     ): void {
         $container = $this->createContainer();
 
@@ -284,6 +284,11 @@ You can start using these exceptions today by setting \'ambta_doctrine_encrypt.w
             array_keys($expectedServices),
             array_keys($expectedAliases)
         );
+
+        if (PHP_MAJOR_VERSION < 8) {
+            $expectedServiceIds[] = \Psr\Container\ContainerInterface::class;
+            $expectedServiceIds[] = \Symfony\Component\DependencyInjection\ContainerInterface::class;
+        }
 
         $this->assertEqualsCanonicalizing($expectedServiceIds, $container->getServiceIds());
 
