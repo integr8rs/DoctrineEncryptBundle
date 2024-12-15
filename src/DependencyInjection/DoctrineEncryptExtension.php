@@ -24,9 +24,8 @@ class DoctrineEncryptExtension extends Extension
     protected $versionTester;
 
     public function __construct(
-        VersionTester $versionTester = null
-    )
-    {
+        ?VersionTester $versionTester = null
+    ) {
         $this->versionTester = $versionTester ?? new VersionTester();
     }
 

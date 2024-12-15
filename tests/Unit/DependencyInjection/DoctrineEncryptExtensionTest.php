@@ -258,8 +258,7 @@ You can start using these exceptions today by setting \'ambta_doctrine_encrypt.w
         array $expectedParameters,
         array $expectedServices,
         array $expectedAliases,
-    ): void
-    {
+    ): void {
         $container = $this->createContainer();
 
         // Default from setup
@@ -277,9 +276,7 @@ You can start using these exceptions today by setting \'ambta_doctrine_encrypt.w
 
         $extension = new DoctrineEncryptExtension($versionTester);
 
-
         $extension->load([$config], $container);
-
 
         $this->assertEqualsCanonicalizing($expectedParameters, $container->getParameterBag()->all());
 
@@ -297,14 +294,13 @@ You can start using these exceptions today by setting \'ambta_doctrine_encrypt.w
 
         foreach ($expectedAliases as $expectedAlias => $expectedValue) {
             $this->assertTrue($container->has($expectedAlias));
-            $this->assertEquals($expectedValue,(string) $container->getAlias($expectedAlias));
+            $this->assertEquals($expectedValue, (string) $container->getAlias($expectedAlias));
         }
-
 
         // Mock additional services
         $container->set('doctrine.orm.entity_manager', $this->createMock(EntityManagerInterface::class));
-        $container->setParameter('kernel.project_dir','');
-        $container->setParameter('kernel.cache_dir','');
+        $container->setParameter('kernel.project_dir', '');
+        $container->setParameter('kernel.cache_dir', '');
 
         // Assert all services are gettable
         foreach ($expectedServices as $expectedService => $class) {
@@ -317,22 +313,22 @@ You can start using these exceptions today by setting \'ambta_doctrine_encrypt.w
         yield 'empty-sf5-php7-orm2' => [
             [],
             [
-                'isSymfony7OrHigher' => false,
-                'isPhp8OrHigher' => false,
+                'isSymfony7OrHigher'    => false,
+                'isPhp8OrHigher'        => false,
                 'doctrineOrmIsVersion3' => false,
             ],
             [
-                'ambta_doctrine_encrypt.encryptor_class_name' => HaliteEncryptor::class,
+                'ambta_doctrine_encrypt.encryptor_class_name'     => HaliteEncryptor::class,
                 'ambta_doctrine_encrypt.enable_secret_generation' => true,
-                'ambta_doctrine_encrypt.secret_directory_path' => '%kernel.project_dir%',
+                'ambta_doctrine_encrypt.secret_directory_path'    => '%kernel.project_dir%',
             ],
             [
                 'ambta_doctrine_encrypt.command.decrypt.database' => \Ambta\DoctrineEncryptBundle\Command\DoctrineDecryptDatabaseCommand::class,
                 'ambta_doctrine_encrypt.command.encrypt.database' => \Ambta\DoctrineEncryptBundle\Command\DoctrineEncryptDatabaseCommand::class,
-                'ambta_doctrine_encrypt.command.encrypt.status' => \Ambta\DoctrineEncryptBundle\Command\DoctrineEncryptStatusCommand::class,
-                'ambta_doctrine_encrypt.encryptor' => '%ambta_doctrine_encrypt.encryptor_class_name%',
-                'ambta_doctrine_encrypt.secret_factory' => \Ambta\DoctrineEncryptBundle\Factories\SecretFactory::class,
-                'ambta_doctrine_encrypt.orm_subscriber' => \Ambta\DoctrineEncryptBundle\Subscribers\DoctrineEncryptSubscriber::class,
+                'ambta_doctrine_encrypt.command.encrypt.status'   => \Ambta\DoctrineEncryptBundle\Command\DoctrineEncryptStatusCommand::class,
+                'ambta_doctrine_encrypt.encryptor'                => '%ambta_doctrine_encrypt.encryptor_class_name%',
+                'ambta_doctrine_encrypt.secret_factory'           => \Ambta\DoctrineEncryptBundle\Factories\SecretFactory::class,
+                'ambta_doctrine_encrypt.orm_subscriber'           => \Ambta\DoctrineEncryptBundle\Subscribers\DoctrineEncryptSubscriber::class,
             ],
             [
                 'ambta_doctrine_encrypt.subscriber' => 'ambta_doctrine_encrypt.orm_subscriber',
@@ -345,20 +341,20 @@ You can start using these exceptions today by setting \'ambta_doctrine_encrypt.w
                 'secret' => '',
             ],
             [
-                'isSymfony7OrHigher' => false,
-                'isPhp8OrHigher' => false,
+                'isSymfony7OrHigher'    => false,
+                'isPhp8OrHigher'        => false,
                 'doctrineOrmIsVersion3' => false,
             ],
             [
                 'ambta_doctrine_encrypt.encryptor_class_name' => HaliteEncryptor::class,
-                'ambta_doctrine_encrypt.secret' => ''
+                'ambta_doctrine_encrypt.secret'               => ''
             ],
             [
                 'ambta_doctrine_encrypt.command.decrypt.database' => \Ambta\DoctrineEncryptBundle\Command\DoctrineDecryptDatabaseCommand::class,
                 'ambta_doctrine_encrypt.command.encrypt.database' => \Ambta\DoctrineEncryptBundle\Command\DoctrineEncryptDatabaseCommand::class,
-                'ambta_doctrine_encrypt.command.encrypt.status' => \Ambta\DoctrineEncryptBundle\Command\DoctrineEncryptStatusCommand::class,
-                'ambta_doctrine_encrypt.encryptor' => '%ambta_doctrine_encrypt.encryptor_class_name%',
-                'ambta_doctrine_encrypt.orm_subscriber' => \Ambta\DoctrineEncryptBundle\Subscribers\DoctrineEncryptSubscriber::class,
+                'ambta_doctrine_encrypt.command.encrypt.status'   => \Ambta\DoctrineEncryptBundle\Command\DoctrineEncryptStatusCommand::class,
+                'ambta_doctrine_encrypt.encryptor'                => '%ambta_doctrine_encrypt.encryptor_class_name%',
+                'ambta_doctrine_encrypt.orm_subscriber'           => \Ambta\DoctrineEncryptBundle\Subscribers\DoctrineEncryptSubscriber::class,
             ],
             [
                 'ambta_doctrine_encrypt.subscriber' => 'ambta_doctrine_encrypt.orm_subscriber',
@@ -369,24 +365,24 @@ You can start using these exceptions today by setting \'ambta_doctrine_encrypt.w
         yield 'empty-sf5-php8-orm2' => [
             [],
             [
-                'isSymfony7OrHigher' => false,
-                'isPhp8OrHigher' => true,
+                'isSymfony7OrHigher'    => false,
+                'isPhp8OrHigher'        => true,
                 'doctrineOrmIsVersion3' => false,
             ],
             [
-                'ambta_doctrine_encrypt.encryptor_class_name' => HaliteEncryptor::class,
+                'ambta_doctrine_encrypt.encryptor_class_name'     => HaliteEncryptor::class,
                 'ambta_doctrine_encrypt.enable_secret_generation' => true,
-                'ambta_doctrine_encrypt.secret_directory_path' => '%kernel.project_dir%',
+                'ambta_doctrine_encrypt.secret_directory_path'    => '%kernel.project_dir%',
             ],
             [
                 'ambta_doctrine_encrypt.command.decrypt.database' => \Ambta\DoctrineEncryptBundle\Command\DoctrineDecryptDatabaseCommand::class,
                 'ambta_doctrine_encrypt.command.encrypt.database' => \Ambta\DoctrineEncryptBundle\Command\DoctrineEncryptDatabaseCommand::class,
-                'ambta_doctrine_encrypt.command.encrypt.status' => \Ambta\DoctrineEncryptBundle\Command\DoctrineEncryptStatusCommand::class,
-                'ambta_doctrine_encrypt.encryptor' => '%ambta_doctrine_encrypt.encryptor_class_name%',
-                'ambta_doctrine_encrypt.secret_factory' => \Ambta\DoctrineEncryptBundle\Factories\SecretFactory::class,
-                'ambta_doctrine_encrypt.orm_subscriber' => \Ambta\DoctrineEncryptBundle\Subscribers\DoctrineEncryptSubscriber::class,
-                'ambta_doctrine_attribute_reader' =>  \Ambta\DoctrineEncryptBundle\Mapping\AttributeReader::class,
-                'ambta_doctrine_annotation_reader' => \Ambta\DoctrineEncryptBundle\Mapping\AttributeAnnotationReader::class,
+                'ambta_doctrine_encrypt.command.encrypt.status'   => \Ambta\DoctrineEncryptBundle\Command\DoctrineEncryptStatusCommand::class,
+                'ambta_doctrine_encrypt.encryptor'                => '%ambta_doctrine_encrypt.encryptor_class_name%',
+                'ambta_doctrine_encrypt.secret_factory'           => \Ambta\DoctrineEncryptBundle\Factories\SecretFactory::class,
+                'ambta_doctrine_encrypt.orm_subscriber'           => \Ambta\DoctrineEncryptBundle\Subscribers\DoctrineEncryptSubscriber::class,
+                'ambta_doctrine_attribute_reader'                 => \Ambta\DoctrineEncryptBundle\Mapping\AttributeReader::class,
+                'ambta_doctrine_annotation_reader'                => \Ambta\DoctrineEncryptBundle\Mapping\AttributeAnnotationReader::class,
             ],
             [
                 'ambta_doctrine_encrypt.subscriber' => 'ambta_doctrine_encrypt.orm_subscriber',
@@ -396,54 +392,54 @@ You can start using these exceptions today by setting \'ambta_doctrine_encrypt.w
         yield 'empty-sf5-php8-orm3' => [
             [],
             [
-                'isSymfony7OrHigher' => false,
-                'isPhp8OrHigher' => true,
+                'isSymfony7OrHigher'    => false,
+                'isPhp8OrHigher'        => true,
                 'doctrineOrmIsVersion3' => true,
             ],
             [
-                'ambta_doctrine_encrypt.encryptor_class_name' => HaliteEncryptor::class,
+                'ambta_doctrine_encrypt.encryptor_class_name'     => HaliteEncryptor::class,
                 'ambta_doctrine_encrypt.enable_secret_generation' => true,
-                'ambta_doctrine_encrypt.secret_directory_path' => '%kernel.project_dir%',
+                'ambta_doctrine_encrypt.secret_directory_path'    => '%kernel.project_dir%',
             ],
             [
                 'ambta_doctrine_encrypt.command.decrypt.database' => \Ambta\DoctrineEncryptBundle\Command\DoctrineDecryptDatabaseCommand::class,
                 'ambta_doctrine_encrypt.command.encrypt.database' => \Ambta\DoctrineEncryptBundle\Command\DoctrineEncryptDatabaseCommand::class,
-                'ambta_doctrine_encrypt.command.encrypt.status' => \Ambta\DoctrineEncryptBundle\Command\DoctrineEncryptStatusCommand::class,
-                'ambta_doctrine_encrypt.encryptor' => '%ambta_doctrine_encrypt.encryptor_class_name%',
-                'ambta_doctrine_encrypt.secret_factory' => \Ambta\DoctrineEncryptBundle\Factories\SecretFactory::class,
-                'ambta_doctrine_encrypt.orm_subscriber' => \Ambta\DoctrineEncryptBundle\Subscribers\DoctrineEncryptSubscriber::class,
-                'ambta_doctrine_attribute_reader' =>  \Ambta\DoctrineEncryptBundle\Mapping\AttributeReader::class,
+                'ambta_doctrine_encrypt.command.encrypt.status'   => \Ambta\DoctrineEncryptBundle\Command\DoctrineEncryptStatusCommand::class,
+                'ambta_doctrine_encrypt.encryptor'                => '%ambta_doctrine_encrypt.encryptor_class_name%',
+                'ambta_doctrine_encrypt.secret_factory'           => \Ambta\DoctrineEncryptBundle\Factories\SecretFactory::class,
+                'ambta_doctrine_encrypt.orm_subscriber'           => \Ambta\DoctrineEncryptBundle\Subscribers\DoctrineEncryptSubscriber::class,
+                'ambta_doctrine_attribute_reader'                 => \Ambta\DoctrineEncryptBundle\Mapping\AttributeReader::class,
             ],
             [
                 'ambta_doctrine_encrypt.subscriber' => 'ambta_doctrine_encrypt.orm_subscriber',
-                'ambta_doctrine_annotation_reader' => 'ambta_doctrine_attribute_reader',
+                'ambta_doctrine_annotation_reader'  => 'ambta_doctrine_attribute_reader',
             ],
         ];
 
         yield 'empty-sf7-php8-orm3' => [
             [],
             [
-                'isSymfony7OrHigher' => true,
-                'isPhp8OrHigher' => true,
+                'isSymfony7OrHigher'    => true,
+                'isPhp8OrHigher'        => true,
                 'doctrineOrmIsVersion3' => true,
             ],
             [
-                'ambta_doctrine_encrypt.encryptor_class_name' => HaliteEncryptor::class,
+                'ambta_doctrine_encrypt.encryptor_class_name'     => HaliteEncryptor::class,
                 'ambta_doctrine_encrypt.enable_secret_generation' => true,
-                'ambta_doctrine_encrypt.secret_directory_path' => '%kernel.project_dir%',
+                'ambta_doctrine_encrypt.secret_directory_path'    => '%kernel.project_dir%',
             ],
             [
                 'ambta_doctrine_encrypt.command.decrypt.database' => \Ambta\DoctrineEncryptBundle\Command\DoctrineDecryptDatabaseCommand::class,
                 'ambta_doctrine_encrypt.command.encrypt.database' => \Ambta\DoctrineEncryptBundle\Command\DoctrineEncryptDatabaseCommand::class,
-                'ambta_doctrine_encrypt.command.encrypt.status' => \Ambta\DoctrineEncryptBundle\Command\DoctrineEncryptStatusCommand::class,
-                'ambta_doctrine_encrypt.encryptor' => '%ambta_doctrine_encrypt.encryptor_class_name%',
-                'ambta_doctrine_encrypt.secret_factory' => \Ambta\DoctrineEncryptBundle\Factories\SecretFactory::class,
-                'ambta_doctrine_encrypt.orm_subscriber' => \Ambta\DoctrineEncryptBundle\Subscribers\DoctrineEncryptSubscriber::class,
-                'ambta_doctrine_attribute_reader' =>  \Ambta\DoctrineEncryptBundle\Mapping\AttributeReader::class,
+                'ambta_doctrine_encrypt.command.encrypt.status'   => \Ambta\DoctrineEncryptBundle\Command\DoctrineEncryptStatusCommand::class,
+                'ambta_doctrine_encrypt.encryptor'                => '%ambta_doctrine_encrypt.encryptor_class_name%',
+                'ambta_doctrine_encrypt.secret_factory'           => \Ambta\DoctrineEncryptBundle\Factories\SecretFactory::class,
+                'ambta_doctrine_encrypt.orm_subscriber'           => \Ambta\DoctrineEncryptBundle\Subscribers\DoctrineEncryptSubscriber::class,
+                'ambta_doctrine_attribute_reader'                 => \Ambta\DoctrineEncryptBundle\Mapping\AttributeReader::class,
             ],
             [
                 'ambta_doctrine_encrypt.subscriber' => 'ambta_doctrine_encrypt.orm_subscriber',
-                'ambta_doctrine_annotation_reader' => 'ambta_doctrine_attribute_reader',
+                'ambta_doctrine_annotation_reader'  => 'ambta_doctrine_attribute_reader',
             ],
         ];
 
@@ -452,25 +448,25 @@ You can start using these exceptions today by setting \'ambta_doctrine_encrypt.w
                 'secret' => '',
             ],
             [
-                'isSymfony7OrHigher' => true,
-                'isPhp8OrHigher' => true,
+                'isSymfony7OrHigher'    => true,
+                'isPhp8OrHigher'        => true,
                 'doctrineOrmIsVersion3' => true,
             ],
             [
                 'ambta_doctrine_encrypt.encryptor_class_name' => HaliteEncryptor::class,
-                'ambta_doctrine_encrypt.secret' => '',
+                'ambta_doctrine_encrypt.secret'               => '',
             ],
             [
                 'ambta_doctrine_encrypt.command.decrypt.database' => \Ambta\DoctrineEncryptBundle\Command\DoctrineDecryptDatabaseCommand::class,
                 'ambta_doctrine_encrypt.command.encrypt.database' => \Ambta\DoctrineEncryptBundle\Command\DoctrineEncryptDatabaseCommand::class,
-                'ambta_doctrine_encrypt.command.encrypt.status' => \Ambta\DoctrineEncryptBundle\Command\DoctrineEncryptStatusCommand::class,
-                'ambta_doctrine_encrypt.encryptor' => '%ambta_doctrine_encrypt.encryptor_class_name%',
-                'ambta_doctrine_encrypt.orm_subscriber' => \Ambta\DoctrineEncryptBundle\Subscribers\DoctrineEncryptSubscriber::class,
-                'ambta_doctrine_attribute_reader' =>  \Ambta\DoctrineEncryptBundle\Mapping\AttributeReader::class,
+                'ambta_doctrine_encrypt.command.encrypt.status'   => \Ambta\DoctrineEncryptBundle\Command\DoctrineEncryptStatusCommand::class,
+                'ambta_doctrine_encrypt.encryptor'                => '%ambta_doctrine_encrypt.encryptor_class_name%',
+                'ambta_doctrine_encrypt.orm_subscriber'           => \Ambta\DoctrineEncryptBundle\Subscribers\DoctrineEncryptSubscriber::class,
+                'ambta_doctrine_attribute_reader'                 => \Ambta\DoctrineEncryptBundle\Mapping\AttributeReader::class,
             ],
             [
                 'ambta_doctrine_encrypt.subscriber' => 'ambta_doctrine_encrypt.orm_subscriber',
-                'ambta_doctrine_annotation_reader' => 'ambta_doctrine_attribute_reader',
+                'ambta_doctrine_annotation_reader'  => 'ambta_doctrine_attribute_reader',
             ],
         ];
     }
