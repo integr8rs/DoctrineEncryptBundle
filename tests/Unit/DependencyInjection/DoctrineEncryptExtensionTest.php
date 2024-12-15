@@ -285,7 +285,7 @@ You can start using these exceptions today by setting \'ambta_doctrine_encrypt.w
 
         $expectedServiceIds = array_merge(
             array_keys($expectedServices),
-            array_keys($expectedAliases),
+            array_keys($expectedAliases)
         );
 
         $this->assertEqualsCanonicalizing($expectedServiceIds, $container->getServiceIds());
