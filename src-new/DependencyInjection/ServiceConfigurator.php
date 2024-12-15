@@ -207,15 +207,84 @@ EOF
 
     private function defineServicesUsingAnnotations(ContainerBuilder $container): void
     {
+        if (!$this->useNewNames) {
+            $container->setAlias('ambta_doctrine_annotation_reader','annotations.reader');
+
+            $container
+                ->register(
+                    'ambta_doctrine_encrypt.orm_subscriber',
+                    \Ambta\DoctrineEncryptBundle\Subscribers\DoctrineEncryptSubscriber::class
+                )
+                ->setArguments([
+                    new Reference('ambta_doctrine_annotation_reader'),
+                    new Reference('ambta_doctrine_encrypt.encryptor'),
+                ])
+                ->addTag('doctrine.event_subscriber')
+            ;
+        }
     }
 
     private function defineServicesUsingAttributes(ContainerBuilder $container): void
     {
+        if (!$this->useNewNames) {
+            $container
+                ->register(
+                    'ambta_doctrine_attribute_reader',
+                    \Ambta\DoctrineEncryptBundle\Mapping\AttributeReader::class,
+                )
+            ;
+            $container->setAlias('ambta_doctrine_annotation_reader','ambta_doctrine_attribute_reader');
 
+            $container
+                ->register(
+                    'ambta_doctrine_encrypt.orm_subscriber',
+                    \Ambta\DoctrineEncryptBundle\Subscribers\DoctrineEncryptSubscriber::class
+                )
+                ->setArguments([
+                    new Reference('ambta_doctrine_attribute_reader'),
+                    new Reference('ambta_doctrine_encrypt.encryptor'),
+                ])
+                ->addTag('doctrine.event_listener',['event' => 'postLoad'])
+                ->addTag('doctrine.event_listener',['event' => 'onFlush'])
+                ->addTag('doctrine.event_listener',['event' => 'preFlush'])
+                ->addTag('doctrine.event_listener',['event' => 'postFlush'])
+                ->addTag('doctrine.event_listener',['event' => 'onClear'])
+            ;
+        }
     }
 
     private function defineServicesUsingAnnotationsAndAttributes(ContainerBuilder $container): void
     {
+        if (!$this->useNewNames) {
+            $container
+                ->register(
+                    'ambta_doctrine_attribute_reader',
+                    \Ambta\DoctrineEncryptBundle\Mapping\AttributeReader::class,
+                )
+            ;
+            $container
+                ->register(
+                    'ambta_doctrine_annotation_reader',
+                    \Ambta\DoctrineEncryptBundle\Mapping\AttributeAnnotationReader::class,
+                )
+                ->setArguments([
+                    new Reference('ambta_doctrine_attribute_reader'),
+                    new Reference('annotations.reader'),
+                    new Parameter('kernel.cache_dir'),
+                ])
+            ;
 
+            $container
+                ->register(
+                    'ambta_doctrine_encrypt.orm_subscriber',
+                    \Ambta\DoctrineEncryptBundle\Subscribers\DoctrineEncryptSubscriber::class
+                )
+                ->setArguments([
+                    new Reference('ambta_doctrine_annotation_reader'),
+                    new Reference('ambta_doctrine_encrypt.encryptor'),
+                ])
+                ->addTag('doctrine.event_subscriber')
+            ;
+        }
     }
 }
