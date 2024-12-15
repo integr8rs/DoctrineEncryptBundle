@@ -15,7 +15,7 @@ use Symfony\Component\HttpKernel\Kernel;
 /**
  * @internal
  */
-class ServiceConfigurator
+final class ServiceConfigurator
 {
     /** @var VersionTester */
     private $versionTester;

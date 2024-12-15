@@ -3,15 +3,13 @@
 namespace DoctrineEncryptBundle\DoctrineEncryptBundle\DependencyInjection;
 
 use Ambta\DoctrineEncryptBundle\DependencyInjection\Configuration;
-use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Loader;
 use Symfony\Component\HttpKernel\Kernel;
 
 /**
  * @internal
  */
-class DoctrineEncryptExtension extends \Ambta\DoctrineEncryptBundle\DependencyInjection\DoctrineEncryptExtension
+final class DoctrineEncryptExtension extends \Ambta\DoctrineEncryptBundle\DependencyInjection\DoctrineEncryptExtension
 {
     public function load(array $configs, ContainerBuilder $container): void
     {
