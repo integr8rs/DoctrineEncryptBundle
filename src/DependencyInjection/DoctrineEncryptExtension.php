@@ -5,6 +5,7 @@ namespace Ambta\DoctrineEncryptBundle\DependencyInjection;
 use Ambta\DoctrineEncryptBundle\Encryptors\DefuseEncryptor;
 use Ambta\DoctrineEncryptBundle\Encryptors\HaliteEncryptor;
 use DoctrineEncryptBundle\DoctrineEncryptBundle\DependencyInjection\ServiceConfigurator;
+use DoctrineEncryptBundle\DoctrineEncryptBundle\DependencyInjection\VersionTester;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\Extension;
 

@@ -2,7 +2,6 @@
 
 namespace Ambta\DoctrineEncryptBundle\Command;
 
-use Ambta\DoctrineEncryptBundle\DependencyInjection\DoctrineEncryptExtension;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\Mapping\ClassMetadataInfo;
 use Symfony\Component\Console\Helper\ProgressBar;

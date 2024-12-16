@@ -1,13 +1,13 @@
 <?php
 
-namespace Ambta\DoctrineEncryptBundle\Tests\Unit\DependencyInjection;
+namespace DoctrineEncryptBundle\DoctrineEncryptBundle\Tests\Unit\DependencyInjection;
 
-use Ambta\DoctrineEncryptBundle\DependencyInjection\DoctrineEncryptExtension;
-use Ambta\DoctrineEncryptBundle\Encryptors\DefuseEncryptor;
-use Ambta\DoctrineEncryptBundle\Encryptors\HaliteEncryptor;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\ORM\EntityManagerInterface;
+use DoctrineEncryptBundle\DoctrineEncryptBundle\DependencyInjection\DoctrineEncryptExtension;
 use DoctrineEncryptBundle\DoctrineEncryptBundle\DependencyInjection\VersionTester;
+use DoctrineEncryptBundle\DoctrineEncryptBundle\Encryptors\DefuseEncryptor;
+use DoctrineEncryptBundle\DoctrineEncryptBundle\Encryptors\HaliteEncryptor;
 use ParagonIE\Halite\KeyFactory;
 use ParagonIE\HiddenString\HiddenString;
 use PHPUnit\Framework\TestCase;
@@ -45,7 +45,7 @@ class DoctrineEncryptExtensionTest extends TestCase
         $container = $this->createContainer();
         $this->extension->load([[]], $container);
 
-        static::assertSame(HaliteEncryptor::class, $container->getParameter('ambta_doctrine_encrypt.encryptor_class_name'));
+        $this->assertSame(HaliteEncryptor::class, $container->getParameter('doctrine_encrypt.encryptor.class_name'));
     }
 
     public function testConfigLoadHalite(): void
@@ -56,7 +56,7 @@ class DoctrineEncryptExtensionTest extends TestCase
         ];
         $this->extension->load([$config], $container);
 
-        static::assertSame(HaliteEncryptor::class, $container->getParameter('ambta_doctrine_encrypt.encryptor_class_name'));
+        $this->assertSame(HaliteEncryptor::class, $container->getParameter('doctrine_encrypt.encryptor.class_name'));
     }
 
     public function testConfigLoadDefuse(): void
@@ -68,7 +68,7 @@ class DoctrineEncryptExtensionTest extends TestCase
         ];
         $this->extension->load([$config], $container);
 
-        static::assertSame(DefuseEncryptor::class, $container->getParameter('ambta_doctrine_encrypt.encryptor_class_name'));
+        $this->assertSame(DefuseEncryptor::class, $container->getParameter('doctrine_encrypt.encryptor.class_name'));
     }
 
     public function testConfigLoadCustomEncryptor(): void
@@ -79,7 +79,7 @@ class DoctrineEncryptExtensionTest extends TestCase
         ];
         $this->extension->load([$config], $container);
 
-        static::assertSame(self::class, $container->getParameter('ambta_doctrine_encrypt.encryptor_class_name'));
+        $this->assertSame(self::class, $container->getParameter('doctrine_encrypt.encryptor.class_name'));
     }
 
     public function testConfigImpossibleToUseSecretAndSecretDirectoryPath(): void
@@ -103,10 +103,10 @@ class DoctrineEncryptExtensionTest extends TestCase
         ];
         $this->extension->load([$config], $container);
 
-        static::assertIsString($container->getParameter('ambta_doctrine_encrypt.secret'));
-        $this->assertStringNotContainsString('Halite', $container->getParameter('ambta_doctrine_encrypt.secret'));
-        $this->assertStringNotContainsString('.key', $container->getParameter('ambta_doctrine_encrypt.secret'));
-        static::assertEquals('my-secret', $container->getParameter('ambta_doctrine_encrypt.secret'));
+        $this->assertIsString($container->getParameter('doctrine_encrypt.secret'));
+        $this->assertStringNotContainsString('Halite', $container->getParameter('doctrine_encrypt.secret'));
+        $this->assertStringNotContainsString('.key', $container->getParameter('doctrine_encrypt.secret'));
+        $this->assertEquals('my-secret', $container->getParameter('doctrine_encrypt.secret'));
     }
 
     public function testHaliteSecretIsCreatedWhenSecretFileDoesNotExistAndSecretCreationIsEnabled(): void
@@ -118,15 +118,15 @@ class DoctrineEncryptExtensionTest extends TestCase
         ];
         $this->extension->load([$config], $container);
 
-        $secretArgument = $container->getDefinition('ambta_doctrine_encrypt.encryptor')->getArgument(0);
+        $secretArgument = $container->getDefinition('doctrine_encrypt.encryptor')->getArgument(0);
         if ($secretArgument instanceof Expression) {
             $actualSecret = $container->resolveServices($secretArgument);
         } else {
             $actualSecret = $secretArgument;
         }
-        static::assertIsString($actualSecret);
+        $this->assertIsString($actualSecret);
         $actualSecretOnDisk = file_get_contents($this->temporaryDirectory.DIRECTORY_SEPARATOR.'.Halite.key');
-        static::assertEquals($actualSecret, $actualSecretOnDisk);
+        $this->assertEquals($actualSecret, $actualSecretOnDisk);
 
         try {
             KeyFactory::importEncryptionKey(new HiddenString($actualSecret));
@@ -145,15 +145,15 @@ class DoctrineEncryptExtensionTest extends TestCase
         ];
         $this->extension->load([$config], $container);
 
-        $secretArgument = $container->getDefinition('ambta_doctrine_encrypt.encryptor')->getArgument(0);
+        $secretArgument = $container->getDefinition('doctrine_encrypt.encryptor')->getArgument(0);
         if ($secretArgument instanceof Expression) {
             $actualSecret = $container->resolveServices($secretArgument);
         } else {
             $actualSecret = $secretArgument;
         }
-        static::assertIsString($actualSecret);
+        $this->assertIsString($actualSecret);
         $actualSecretOnDisk = file_get_contents($this->temporaryDirectory.DIRECTORY_SEPARATOR.'.Defuse.key');
-        static::assertEquals($actualSecret, $actualSecretOnDisk);
+        $this->assertEquals($actualSecret, $actualSecretOnDisk);
 
         if (strlen(hex2bin($actualSecret)) !== 255) {
             $this->fail('Generated key is not valid');
@@ -175,11 +175,10 @@ class DoctrineEncryptExtensionTest extends TestCase
         } elseif (method_exists($this, 'expectExceptionMessageRegExp')) {
             $this->expectExceptionMessageRegExp('/DoctrineEncryptBundle: Unable to create secret.*/');
         } else {
-            // Unable to see if the exception matches the actual message.
-            $this->markAsRisky();
+            $this->markAsRisky('Unable to see if the exception matches the actual message');
         }
 
-        $secretArgument = $container->getDefinition('ambta_doctrine_encrypt.encryptor')->getArgument(0);
+        $secretArgument = $container->getDefinition('doctrine_encrypt.encryptor')->getArgument(0);
         if ($secretArgument instanceof Expression) {
             $container->resolveServices($secretArgument);
         }
@@ -198,14 +197,14 @@ class DoctrineEncryptExtensionTest extends TestCase
         ];
         $this->extension->load([$config], $container);
 
-        $secretArgument = $container->getDefinition('ambta_doctrine_encrypt.encryptor')->getArgument(0);
+        $secretArgument = $container->getDefinition('doctrine_encrypt.encryptor')->getArgument(0);
         if ($secretArgument instanceof Expression) {
             $actualSecret = $container->resolveServices($secretArgument);
         } else {
             $actualSecret = $secretArgument;
         }
-        static::assertIsString($actualSecret);
-        static::assertEquals($expectedSecret, $actualSecret);
+        $this->assertIsString($actualSecret);
+        $this->assertEquals($expectedSecret, $actualSecret);
     }
 
     /**
@@ -216,8 +215,8 @@ class DoctrineEncryptExtensionTest extends TestCase
         $container = $this->createContainer();
         $config    = [];
 
-        $this->expectDeprecation('Since doctrineencryptbundle/doctrine-encrypt-bundle 5.4.2: Starting from 6.0, all exceptions thrown by this library will be wrapped by \Ambta\DoctrineEncryptBundle\Exception\DoctrineEncryptBundleException or a child-class of it.
-You can start using these exceptions today by setting \'ambta_doctrine_encrypt.wrap_exceptions\' to TRUE.');
+        $this->expectDeprecation('Since doctrineencryptbundle/doctrine-encrypt-bundle 5.4.2: Starting from 6.0, all exceptions thrown by this library will be wrapped by \DoctrineEncryptBundle\DoctrineEncryptBundle\Exception\DoctrineEncryptBundleException or a child-class of it.
+You can start using these exceptions today by setting \'doctrine_encrypt.wrap_exceptions\' to TRUE.');
         $this->extension->load([$config], $container);
         $this->assertFalse(DoctrineEncryptExtension::wrapExceptions());
     }
@@ -230,8 +229,8 @@ You can start using these exceptions today by setting \'ambta_doctrine_encrypt.w
         $container = $this->createContainer();
         $config    = ['wrap_exceptions' => false];
 
-        $this->expectDeprecation('Since doctrineencryptbundle/doctrine-encrypt-bundle 5.4.2: Starting from 6.0, all exceptions thrown by this library will be wrapped by \Ambta\DoctrineEncryptBundle\Exception\DoctrineEncryptBundleException or a child-class of it.
-You can start using these exceptions today by setting \'ambta_doctrine_encrypt.wrap_exceptions\' to TRUE.');
+        $this->expectDeprecation('Since doctrineencryptbundle/doctrine-encrypt-bundle 5.4.2: Starting from 6.0, all exceptions thrown by this library will be wrapped by \DoctrineEncryptBundle\DoctrineEncryptBundle\Exception\DoctrineEncryptBundleException or a child-class of it.
+You can start using these exceptions today by setting \'doctrine_encrypt.wrap_exceptions\' to TRUE.');
         $this->extension->load([$config], $container);
         $this->assertFalse(DoctrineEncryptExtension::wrapExceptions());
     }
@@ -283,12 +282,10 @@ You can start using these exceptions today by setting \'ambta_doctrine_encrypt.w
         $expectedServiceIds = array_merge(
             array_keys($expectedServices),
             array_keys($expectedAliases),
-            PHP_MAJOR_VERSION < 8
-                ? [
-                    \Psr\Container\ContainerInterface::class,
-                    \Symfony\Component\DependencyInjection\ContainerInterface::class,
-                ]
-                : []
+            [
+                \Psr\Container\ContainerInterface::class,
+                \Symfony\Component\DependencyInjection\ContainerInterface::class,
+            ]
         );
 
         $this->assertEqualsCanonicalizing($expectedServiceIds, $container->getServiceIds());
@@ -324,25 +321,24 @@ You can start using these exceptions today by setting \'ambta_doctrine_encrypt.w
                 'doctrineOrmIsVersion3' => false,
             ],
             [
-                'ambta_doctrine_encrypt.encryptor_class_name' => HaliteEncryptor::class,
-                'ambta_doctrine_encrypt.supported_encryptors' => [
-                    'halite' => DefuseEncryptor::class,
-                    'defuse' => HaliteEncryptor::class,
+                'doctrine_encrypt.encryptor.class_name'     => HaliteEncryptor::class,
+                'doctrine_encrypt.supported_encryptors'     => [
+                    'halite' => \DoctrineEncryptBundle\DoctrineEncryptBundle\Encryptors\DefuseEncryptor::class,
+                    'defuse' => \DoctrineEncryptBundle\DoctrineEncryptBundle\Encryptors\HaliteEncryptor::class,
                 ],
-                'ambta_doctrine_encrypt.enable_secret_generation' => true,
-                'ambta_doctrine_encrypt.secret_directory_path'    => '%kernel.project_dir%',
+                'doctrine_encrypt.secret.enable_generation' => true,
+                'doctrine_encrypt.secret.directory_path'    => '%kernel.project_dir%',
             ],
             [
-                'ambta_doctrine_encrypt.command.decrypt.database' => \Ambta\DoctrineEncryptBundle\Command\DoctrineDecryptDatabaseCommand::class,
-                'ambta_doctrine_encrypt.command.encrypt.database' => \Ambta\DoctrineEncryptBundle\Command\DoctrineEncryptDatabaseCommand::class,
-                'ambta_doctrine_encrypt.command.encrypt.status'   => \Ambta\DoctrineEncryptBundle\Command\DoctrineEncryptStatusCommand::class,
-                'ambta_doctrine_encrypt.encryptor'                => '%ambta_doctrine_encrypt.encryptor_class_name%',
-                'ambta_doctrine_encrypt.secret_factory'           => \Ambta\DoctrineEncryptBundle\Factories\SecretFactory::class,
-                'ambta_doctrine_encrypt.orm_subscriber'           => \Ambta\DoctrineEncryptBundle\Subscribers\DoctrineEncryptSubscriber::class,
+                'doctrine_encrypt.command.decrypt_database' => \DoctrineEncryptBundle\DoctrineEncryptBundle\Command\DoctrineDecryptDatabaseCommand::class,
+                'doctrine_encrypt.command.encrypt_database' => \DoctrineEncryptBundle\DoctrineEncryptBundle\Command\DoctrineEncryptDatabaseCommand::class,
+                'doctrine_encrypt.command.encrypt_status'   => \DoctrineEncryptBundle\DoctrineEncryptBundle\Command\DoctrineEncryptStatusCommand::class,
+                'doctrine_encrypt.encryptor'                => '%doctrine_encrypt.encryptor.class_name%',
+                'doctrine_encrypt.secret.factory'           => \DoctrineEncryptBundle\DoctrineEncryptBundle\Factories\SecretFactory::class,
+                'doctrine_encrypt.orm.subscriber'           => \DoctrineEncryptBundle\DoctrineEncryptBundle\Subscribers\DoctrineEncryptSubscriber::class,
             ],
             [
-                'ambta_doctrine_encrypt.subscriber' => 'ambta_doctrine_encrypt.orm_subscriber',
-                'ambta_doctrine_annotation_reader'  => 'annotations.reader',
+                'doctrine_encrypt.annotations.reader'  => 'annotations.reader',
             ],
         ];
 
@@ -356,23 +352,22 @@ You can start using these exceptions today by setting \'ambta_doctrine_encrypt.w
                 'doctrineOrmIsVersion3' => false,
             ],
             [
-                'ambta_doctrine_encrypt.encryptor_class_name' => HaliteEncryptor::class,
-                'ambta_doctrine_encrypt.supported_encryptors' => [
-                    'halite' => DefuseEncryptor::class,
-                    'defuse' => HaliteEncryptor::class,
+                'doctrine_encrypt.encryptor.class_name' => HaliteEncryptor::class,
+                'doctrine_encrypt.supported_encryptors'     => [
+                    'halite' => \DoctrineEncryptBundle\DoctrineEncryptBundle\Encryptors\DefuseEncryptor::class,
+                    'defuse' => \DoctrineEncryptBundle\DoctrineEncryptBundle\Encryptors\HaliteEncryptor::class,
                 ],
-                'ambta_doctrine_encrypt.secret' => ''
+                'doctrine_encrypt.secret'               => ''
             ],
             [
-                'ambta_doctrine_encrypt.command.decrypt.database' => \Ambta\DoctrineEncryptBundle\Command\DoctrineDecryptDatabaseCommand::class,
-                'ambta_doctrine_encrypt.command.encrypt.database' => \Ambta\DoctrineEncryptBundle\Command\DoctrineEncryptDatabaseCommand::class,
-                'ambta_doctrine_encrypt.command.encrypt.status'   => \Ambta\DoctrineEncryptBundle\Command\DoctrineEncryptStatusCommand::class,
-                'ambta_doctrine_encrypt.encryptor'                => '%ambta_doctrine_encrypt.encryptor_class_name%',
-                'ambta_doctrine_encrypt.orm_subscriber'           => \Ambta\DoctrineEncryptBundle\Subscribers\DoctrineEncryptSubscriber::class,
+                'doctrine_encrypt.command.decrypt_database' => \DoctrineEncryptBundle\DoctrineEncryptBundle\Command\DoctrineDecryptDatabaseCommand::class,
+                'doctrine_encrypt.command.encrypt_database' => \DoctrineEncryptBundle\DoctrineEncryptBundle\Command\DoctrineEncryptDatabaseCommand::class,
+                'doctrine_encrypt.command.encrypt_status'   => \DoctrineEncryptBundle\DoctrineEncryptBundle\Command\DoctrineEncryptStatusCommand::class,
+                'doctrine_encrypt.encryptor'                => '%doctrine_encrypt.encryptor.class_name%',
+                'doctrine_encrypt.orm.subscriber'           => \DoctrineEncryptBundle\DoctrineEncryptBundle\Subscribers\DoctrineEncryptSubscriber::class,
             ],
             [
-                'ambta_doctrine_encrypt.subscriber' => 'ambta_doctrine_encrypt.orm_subscriber',
-                'ambta_doctrine_annotation_reader'  => 'annotations.reader',
+                'doctrine_encrypt.annotations.reader'  => 'annotations.reader',
             ],
         ];
 
@@ -384,26 +379,25 @@ You can start using these exceptions today by setting \'ambta_doctrine_encrypt.w
                 'doctrineOrmIsVersion3' => false,
             ],
             [
-                'ambta_doctrine_encrypt.encryptor_class_name' => HaliteEncryptor::class,
-                'ambta_doctrine_encrypt.supported_encryptors' => [
-                    'halite' => DefuseEncryptor::class,
-                    'defuse' => HaliteEncryptor::class,
+                'doctrine_encrypt.encryptor.class_name'     => HaliteEncryptor::class,
+                'doctrine_encrypt.supported_encryptors'     => [
+                    'halite' => \DoctrineEncryptBundle\DoctrineEncryptBundle\Encryptors\DefuseEncryptor::class,
+                    'defuse' => \DoctrineEncryptBundle\DoctrineEncryptBundle\Encryptors\HaliteEncryptor::class,
                 ],
-                'ambta_doctrine_encrypt.enable_secret_generation' => true,
-                'ambta_doctrine_encrypt.secret_directory_path'    => '%kernel.project_dir%',
+                'doctrine_encrypt.secret.enable_generation' => true,
+                'doctrine_encrypt.secret.directory_path'    => '%kernel.project_dir%',
             ],
             [
-                'ambta_doctrine_encrypt.command.decrypt.database' => \Ambta\DoctrineEncryptBundle\Command\DoctrineDecryptDatabaseCommand::class,
-                'ambta_doctrine_encrypt.command.encrypt.database' => \Ambta\DoctrineEncryptBundle\Command\DoctrineEncryptDatabaseCommand::class,
-                'ambta_doctrine_encrypt.command.encrypt.status'   => \Ambta\DoctrineEncryptBundle\Command\DoctrineEncryptStatusCommand::class,
-                'ambta_doctrine_encrypt.encryptor'                => '%ambta_doctrine_encrypt.encryptor_class_name%',
-                'ambta_doctrine_encrypt.secret_factory'           => \Ambta\DoctrineEncryptBundle\Factories\SecretFactory::class,
-                'ambta_doctrine_encrypt.orm_subscriber'           => \Ambta\DoctrineEncryptBundle\Subscribers\DoctrineEncryptSubscriber::class,
-                'ambta_doctrine_attribute_reader'                 => \Ambta\DoctrineEncryptBundle\Mapping\AttributeReader::class,
-                'ambta_doctrine_annotation_reader'                => \Ambta\DoctrineEncryptBundle\Mapping\AttributeAnnotationReader::class,
+                'doctrine_encrypt.command.decrypt_database' => \DoctrineEncryptBundle\DoctrineEncryptBundle\Command\DoctrineDecryptDatabaseCommand::class,
+                'doctrine_encrypt.command.encrypt_database' => \DoctrineEncryptBundle\DoctrineEncryptBundle\Command\DoctrineEncryptDatabaseCommand::class,
+                'doctrine_encrypt.command.encrypt_status'   => \DoctrineEncryptBundle\DoctrineEncryptBundle\Command\DoctrineEncryptStatusCommand::class,
+                'doctrine_encrypt.encryptor'                => '%doctrine_encrypt.encryptor.class_name%',
+                'doctrine_encrypt.secret.factory'           => \DoctrineEncryptBundle\DoctrineEncryptBundle\Factories\SecretFactory::class,
+                'doctrine_encrypt.orm.subscriber'           => \DoctrineEncryptBundle\DoctrineEncryptBundle\Subscribers\DoctrineEncryptSubscriber::class,
+                'doctrine_encrypt.attributes.reader'        => \DoctrineEncryptBundle\DoctrineEncryptBundle\Mapping\AttributeReader::class,
+                'doctrine_encrypt.annotations.reader'       => \DoctrineEncryptBundle\DoctrineEncryptBundle\Mapping\AttributeAnnotationReader::class,
             ],
             [
-                'ambta_doctrine_encrypt.subscriber' => 'ambta_doctrine_encrypt.orm_subscriber',
             ],
         ];
 
@@ -415,26 +409,25 @@ You can start using these exceptions today by setting \'ambta_doctrine_encrypt.w
                 'doctrineOrmIsVersion3' => true,
             ],
             [
-                'ambta_doctrine_encrypt.encryptor_class_name' => HaliteEncryptor::class,
-                'ambta_doctrine_encrypt.supported_encryptors' => [
-                    'halite' => DefuseEncryptor::class,
-                    'defuse' => HaliteEncryptor::class,
+                'doctrine_encrypt.encryptor.class_name'     => HaliteEncryptor::class,
+                'doctrine_encrypt.supported_encryptors'     => [
+                    'halite' => \DoctrineEncryptBundle\DoctrineEncryptBundle\Encryptors\DefuseEncryptor::class,
+                    'defuse' => \DoctrineEncryptBundle\DoctrineEncryptBundle\Encryptors\HaliteEncryptor::class,
                 ],
-                'ambta_doctrine_encrypt.enable_secret_generation' => true,
-                'ambta_doctrine_encrypt.secret_directory_path'    => '%kernel.project_dir%',
+                'doctrine_encrypt.secret.enable_generation' => true,
+                'doctrine_encrypt.secret.directory_path'    => '%kernel.project_dir%',
             ],
             [
-                'ambta_doctrine_encrypt.command.decrypt.database' => \Ambta\DoctrineEncryptBundle\Command\DoctrineDecryptDatabaseCommand::class,
-                'ambta_doctrine_encrypt.command.encrypt.database' => \Ambta\DoctrineEncryptBundle\Command\DoctrineEncryptDatabaseCommand::class,
-                'ambta_doctrine_encrypt.command.encrypt.status'   => \Ambta\DoctrineEncryptBundle\Command\DoctrineEncryptStatusCommand::class,
-                'ambta_doctrine_encrypt.encryptor'                => '%ambta_doctrine_encrypt.encryptor_class_name%',
-                'ambta_doctrine_encrypt.secret_factory'           => \Ambta\DoctrineEncryptBundle\Factories\SecretFactory::class,
-                'ambta_doctrine_encrypt.orm_subscriber'           => \Ambta\DoctrineEncryptBundle\Subscribers\DoctrineEncryptSubscriber::class,
-                'ambta_doctrine_attribute_reader'                 => \Ambta\DoctrineEncryptBundle\Mapping\AttributeReader::class,
+                'doctrine_encrypt.command.decrypt_database' => \DoctrineEncryptBundle\DoctrineEncryptBundle\Command\DoctrineDecryptDatabaseCommand::class,
+                'doctrine_encrypt.command.encrypt_database' => \DoctrineEncryptBundle\DoctrineEncryptBundle\Command\DoctrineEncryptDatabaseCommand::class,
+                'doctrine_encrypt.command.encrypt_status'   => \DoctrineEncryptBundle\DoctrineEncryptBundle\Command\DoctrineEncryptStatusCommand::class,
+                'doctrine_encrypt.encryptor'                => '%doctrine_encrypt.encryptor.class_name%',
+                'doctrine_encrypt.secret.factory'           => \DoctrineEncryptBundle\DoctrineEncryptBundle\Factories\SecretFactory::class,
+                'doctrine_encrypt.orm.subscriber'           => \DoctrineEncryptBundle\DoctrineEncryptBundle\Subscribers\DoctrineEncryptSubscriber::class,
+                'doctrine_encrypt.attributes.reader'        => \DoctrineEncryptBundle\DoctrineEncryptBundle\Mapping\AttributeReader::class,
             ],
             [
-                'ambta_doctrine_encrypt.subscriber' => 'ambta_doctrine_encrypt.orm_subscriber',
-                'ambta_doctrine_annotation_reader'  => 'ambta_doctrine_attribute_reader',
+                'doctrine_encrypt.annotations.reader'  => 'doctrine_encrypt.attributes.reader',
             ],
         ];
 
@@ -446,26 +439,25 @@ You can start using these exceptions today by setting \'ambta_doctrine_encrypt.w
                 'doctrineOrmIsVersion3' => true,
             ],
             [
-                'ambta_doctrine_encrypt.encryptor_class_name' => HaliteEncryptor::class,
-                'ambta_doctrine_encrypt.supported_encryptors' => [
-                    'halite' => DefuseEncryptor::class,
-                    'defuse' => HaliteEncryptor::class,
+                'doctrine_encrypt.encryptor.class_name'     => HaliteEncryptor::class,
+                'doctrine_encrypt.supported_encryptors'     => [
+                    'halite' => \DoctrineEncryptBundle\DoctrineEncryptBundle\Encryptors\DefuseEncryptor::class,
+                    'defuse' => \DoctrineEncryptBundle\DoctrineEncryptBundle\Encryptors\HaliteEncryptor::class,
                 ],
-                'ambta_doctrine_encrypt.enable_secret_generation' => true,
-                'ambta_doctrine_encrypt.secret_directory_path'    => '%kernel.project_dir%',
+                'doctrine_encrypt.secret.enable_generation' => true,
+                'doctrine_encrypt.secret.directory_path'    => '%kernel.project_dir%',
             ],
             [
-                'ambta_doctrine_encrypt.command.decrypt.database' => \Ambta\DoctrineEncryptBundle\Command\DoctrineDecryptDatabaseCommand::class,
-                'ambta_doctrine_encrypt.command.encrypt.database' => \Ambta\DoctrineEncryptBundle\Command\DoctrineEncryptDatabaseCommand::class,
-                'ambta_doctrine_encrypt.command.encrypt.status'   => \Ambta\DoctrineEncryptBundle\Command\DoctrineEncryptStatusCommand::class,
-                'ambta_doctrine_encrypt.encryptor'                => '%ambta_doctrine_encrypt.encryptor_class_name%',
-                'ambta_doctrine_encrypt.secret_factory'           => \Ambta\DoctrineEncryptBundle\Factories\SecretFactory::class,
-                'ambta_doctrine_encrypt.orm_subscriber'           => \Ambta\DoctrineEncryptBundle\Subscribers\DoctrineEncryptSubscriber::class,
-                'ambta_doctrine_attribute_reader'                 => \Ambta\DoctrineEncryptBundle\Mapping\AttributeReader::class,
+                'doctrine_encrypt.command.decrypt_database' => \DoctrineEncryptBundle\DoctrineEncryptBundle\Command\DoctrineDecryptDatabaseCommand::class,
+                'doctrine_encrypt.command.encrypt_database' => \DoctrineEncryptBundle\DoctrineEncryptBundle\Command\DoctrineEncryptDatabaseCommand::class,
+                'doctrine_encrypt.command.encrypt_status'   => \DoctrineEncryptBundle\DoctrineEncryptBundle\Command\DoctrineEncryptStatusCommand::class,
+                'doctrine_encrypt.encryptor'                => '%doctrine_encrypt.encryptor.class_name%',
+                'doctrine_encrypt.secret.factory'           => \DoctrineEncryptBundle\DoctrineEncryptBundle\Factories\SecretFactory::class,
+                'doctrine_encrypt.orm.subscriber'           => \DoctrineEncryptBundle\DoctrineEncryptBundle\Subscribers\DoctrineEncryptSubscriber::class,
+                'doctrine_encrypt.attributes.reader'        => \DoctrineEncryptBundle\DoctrineEncryptBundle\Mapping\AttributeReader::class,
             ],
             [
-                'ambta_doctrine_encrypt.subscriber' => 'ambta_doctrine_encrypt.orm_subscriber',
-                'ambta_doctrine_annotation_reader'  => 'ambta_doctrine_attribute_reader',
+                'doctrine_encrypt.annotations.reader'  => 'doctrine_encrypt.attributes.reader',
             ],
         ];
 
@@ -479,24 +471,23 @@ You can start using these exceptions today by setting \'ambta_doctrine_encrypt.w
                 'doctrineOrmIsVersion3' => true,
             ],
             [
-                'ambta_doctrine_encrypt.encryptor_class_name' => HaliteEncryptor::class,
-                'ambta_doctrine_encrypt.supported_encryptors' => [
-                    'halite' => DefuseEncryptor::class,
-                    'defuse' => HaliteEncryptor::class,
+                'doctrine_encrypt.encryptor.class_name' => HaliteEncryptor::class,
+                'doctrine_encrypt.supported_encryptors' => [
+                    'halite' => \DoctrineEncryptBundle\DoctrineEncryptBundle\Encryptors\DefuseEncryptor::class,
+                    'defuse' => \DoctrineEncryptBundle\DoctrineEncryptBundle\Encryptors\HaliteEncryptor::class,
                 ],
-                'ambta_doctrine_encrypt.secret' => '',
+                'doctrine_encrypt.secret'               => '',
             ],
             [
-                'ambta_doctrine_encrypt.command.decrypt.database' => \Ambta\DoctrineEncryptBundle\Command\DoctrineDecryptDatabaseCommand::class,
-                'ambta_doctrine_encrypt.command.encrypt.database' => \Ambta\DoctrineEncryptBundle\Command\DoctrineEncryptDatabaseCommand::class,
-                'ambta_doctrine_encrypt.command.encrypt.status'   => \Ambta\DoctrineEncryptBundle\Command\DoctrineEncryptStatusCommand::class,
-                'ambta_doctrine_encrypt.encryptor'                => '%ambta_doctrine_encrypt.encryptor_class_name%',
-                'ambta_doctrine_encrypt.orm_subscriber'           => \Ambta\DoctrineEncryptBundle\Subscribers\DoctrineEncryptSubscriber::class,
-                'ambta_doctrine_attribute_reader'                 => \Ambta\DoctrineEncryptBundle\Mapping\AttributeReader::class,
+                'doctrine_encrypt.command.decrypt_database' => \DoctrineEncryptBundle\DoctrineEncryptBundle\Command\DoctrineDecryptDatabaseCommand::class,
+                'doctrine_encrypt.command.encrypt_database' => \DoctrineEncryptBundle\DoctrineEncryptBundle\Command\DoctrineEncryptDatabaseCommand::class,
+                'doctrine_encrypt.command.encrypt_status'   => \DoctrineEncryptBundle\DoctrineEncryptBundle\Command\DoctrineEncryptStatusCommand::class,
+                'doctrine_encrypt.encryptor'                => '%doctrine_encrypt.encryptor.class_name%',
+                'doctrine_encrypt.orm.subscriber'           => \DoctrineEncryptBundle\DoctrineEncryptBundle\Subscribers\DoctrineEncryptSubscriber::class,
+                'doctrine_encrypt.attributes.reader'        => \DoctrineEncryptBundle\DoctrineEncryptBundle\Mapping\AttributeReader::class,
             ],
             [
-                'ambta_doctrine_encrypt.subscriber' => 'ambta_doctrine_encrypt.orm_subscriber',
-                'ambta_doctrine_annotation_reader'  => 'ambta_doctrine_attribute_reader',
+                'doctrine_encrypt.annotations.reader' => 'doctrine_encrypt.attributes.reader',
             ],
         ];
     }
