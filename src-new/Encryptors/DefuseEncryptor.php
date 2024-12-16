@@ -13,7 +13,7 @@ use DoctrineEncryptBundle\DoctrineEncryptBundle\Exception\UnableToEncryptExcepti
  *
  * @author Michael de Groot <specamps@gmail.com>
  */
-final class DefuseEncryptor extends \Ambta\DoctrineEncryptBundle\Encryptors\DefuseEncryptor
+final class DefuseEncryptor extends \Ambta\DoctrineEncryptBundle\Encryptors\DefuseEncryptor implements EncryptorInterface
 {
     /**
      * @throws UnableToEncryptException

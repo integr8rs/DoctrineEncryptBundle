@@ -13,9 +13,12 @@
         <testsuite name="functional">
             <directory suffix="Test.php">./tests/Functional</directory>
         </testsuite>
-<!--        <testsuite name="unit-new">-->
-<!--            <directory suffix="Test.php">./tests-new/Unit</directory>-->
-<!--        </testsuite>-->
+        <testsuite name="unit-new">
+            <directory suffix="Test.php">./tests-new/Unit</directory>
+        </testsuite>
+        <testsuite name="functional-new">
+            <directory suffix="Test.php">./tests-new/Functional</directory>
+        </testsuite>
     </testsuites>
 
     <coverage>

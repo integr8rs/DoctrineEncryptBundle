@@ -16,6 +16,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
 use Symfony\Component\ExpressionLanguage\Expression;
+use Symfony\Component\Filesystem\Filesystem;
 
 class DoctrineEncryptExtensionTest extends TestCase
 {
@@ -37,7 +38,9 @@ class DoctrineEncryptExtensionTest extends TestCase
 
     protected function tearDown(): void
     {
-        unlink($this->temporaryDirectory);
+        (new Filesystem())->remove($this->temporaryDirectory);
+
+        \Ambta\DoctrineEncryptBundle\DependencyInjection\DoctrineEncryptExtension::wrapExceptions(false);
     }
 
     public function testConfigLoadHaliteByDefault(): void
