@@ -2,7 +2,6 @@
 
 namespace Ambta\DoctrineEncryptBundle\Factories;
 
-use Ambta\DoctrineEncryptBundle\DependencyInjection\DoctrineEncryptExtension;
 use Ambta\DoctrineEncryptBundle\Encryptors\DefuseEncryptor;
 use Ambta\DoctrineEncryptBundle\Encryptors\HaliteEncryptor;
 use ParagonIE\Halite\KeyFactory;
@@ -18,10 +17,6 @@ class SecretFactory
      * @var bool
      */
     private $enableSecretCreation;
-    /**
-     * @var Filesystem
-     */
-    private $fs;
 
     public function __construct(string $secretDirectory, bool $enableSecretCreation)
     {
@@ -36,7 +31,7 @@ class SecretFactory
      */
     public function getSecret(string $className)
     {
-        if (!in_array($className, DoctrineEncryptExtension::SupportedEncryptorClasses)) {
+        if (!in_array($className, [DefuseEncryptor::class,HaliteEncryptor::class])) {
             throw new \RuntimeException(sprintf('Class "%s" is not supported by %s', $className, self::class));
         }
 

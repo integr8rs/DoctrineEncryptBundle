@@ -53,7 +53,7 @@ class DoctrineEncryptBundleTest extends TestCase
         $this->expectDeprecation('The "DoctrineEncryptBundle\DoctrineEncryptBundle\DependencyInjection\Configuration" class extends "Ambta\DoctrineEncryptBundle\DependencyInjection\Configuration" that is deprecated Use \DoctrineEncryptBundle\DoctrineEncryptBundle\DependencyInjection\Configuration instead. This class will be removed in 6.0.');
         $container->compile();
 
-        $this->assertTrue($container->hasParameter('doctrine_encrypt_bundle.secret'));
-        $this->assertEquals('doctrine_encrypt_bundle.yaml', $container->getParameter('doctrine_encrypt_bundle.secret'));
+        $this->assertTrue($container->hasParameter('doctrine_encrypt.secret'));
+        $this->assertEquals('doctrine_encrypt_bundle.yaml', $container->getParameter('doctrine_encrypt.secret'));
     }
 }
