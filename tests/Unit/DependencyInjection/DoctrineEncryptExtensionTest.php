@@ -16,6 +16,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
 use Symfony\Component\ExpressionLanguage\Expression;
+use Symfony\Component\Filesystem\Filesystem;
 
 class DoctrineEncryptExtensionTest extends TestCase
 {
@@ -37,7 +38,9 @@ class DoctrineEncryptExtensionTest extends TestCase
 
     protected function tearDown(): void
     {
-        unlink($this->temporaryDirectory);
+        (new Filesystem())->remove($this->temporaryDirectory);
+
+        DoctrineEncryptExtension::wrapExceptions(false);
     }
 
     public function testConfigLoadHaliteByDefault(): void
@@ -269,6 +272,8 @@ You can start using these exceptions today by setting \'ambta_doctrine_encrypt.w
             $expectedServices[$id] = $definition->getClass();
         }
 
+        $originalExpectedServiceIds = $container->getServiceIds();
+
         $versionTester = $this->createMock(VersionTester::class);
         foreach ($mockedVersions as $method => $response) {
             $versionTester->method($method)->willReturn($response);
@@ -280,16 +285,11 @@ You can start using these exceptions today by setting \'ambta_doctrine_encrypt.w
 
         $this->assertEqualsCanonicalizing($expectedParameters, $container->getParameterBag()->all());
 
-        $expectedServiceIds = array_merge(
+        $expectedServiceIds = array_unique(array_merge(
+            $originalExpectedServiceIds,
             array_keys($expectedServices),
-            array_keys($expectedAliases),
-            PHP_MAJOR_VERSION < 8
-                ? [
-                    \Psr\Container\ContainerInterface::class,
-                    \Symfony\Component\DependencyInjection\ContainerInterface::class,
-                ]
-                : []
-        );
+            array_keys($expectedAliases)
+        ));
 
         $this->assertEqualsCanonicalizing($expectedServiceIds, $container->getServiceIds());
 

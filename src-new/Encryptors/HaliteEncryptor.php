@@ -13,7 +13,7 @@ use DoctrineEncryptBundle\DoctrineEncryptBundle\Exception\UnableToEncryptExcepti
  *
  * @author Michael de Groot <specamps@gmail.com>
  */
-final class HaliteEncryptor extends \Ambta\DoctrineEncryptBundle\Encryptors\HaliteEncryptor
+final class HaliteEncryptor extends \Ambta\DoctrineEncryptBundle\Encryptors\HaliteEncryptor implements EncryptorInterface
 {
     /**
      * @throws UnableToEncryptException
