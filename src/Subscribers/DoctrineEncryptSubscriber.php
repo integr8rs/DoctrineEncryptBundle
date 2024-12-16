@@ -27,18 +27,31 @@ class DoctrineEncryptSubscriber implements EventSubscriber
 {
     /**
      * Appended to end of encrypted value.
+     *
+     * @internal
      */
     public const ENCRYPTION_MARKER = '<ENC>';
 
     /**
      * Encryptor interface namespace.
+     *
+     * @deprecated This constant will be removed in DoctrineEncryptBundle 6.0
+     *
+     * @TODO-6.0 Remove constant
      */
     public const ENCRYPTOR_INTERFACE_NS = 'Ambta\DoctrineEncryptBundle\Encryptors\EncryptorInterface';
 
     /**
      * Encrypted annotation full name.
+     *
+     * @deprecated This constant will be removed in DoctrineEncryptBundle 6.0
+     *
+     * @TODO-6.0 Remove constant
      */
-    public const ENCRYPTED_ANN_NAME = 'Ambta\DoctrineEncryptBundle\Configuration\Encrypted';
+    public const ENCRYPTED_ANN_NAME = \Ambta\DoctrineEncryptBundle\Configuration\Encrypted::class;
+
+    /** @var string */
+    protected $annotationName = \Ambta\DoctrineEncryptBundle\Configuration\Encrypted::class;
 
     /**
      * Encryptor.
@@ -385,7 +398,7 @@ class DoctrineEncryptSubscriber implements EventSubscriber
         $key = $refProperty->getDeclaringClass()->getName().$refProperty->getName();
         if (!array_key_exists($key, $this->cachedClassPropertiesAreEncrypted)) {
             $type               = null;
-            $propertyAnnotation = $this->annReader->getPropertyAnnotation($refProperty, self::ENCRYPTED_ANN_NAME);
+            $propertyAnnotation = $this->annReader->getPropertyAnnotation($refProperty, $this->annotationName);
             if ($propertyAnnotation) {
                 $type = $propertyAnnotation->type;
             }

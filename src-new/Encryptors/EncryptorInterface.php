@@ -10,7 +10,7 @@ use DoctrineEncryptBundle\DoctrineEncryptBundle\Exception\UnableToEncryptExcepti
  *
  * @author Victor Melnik <melnikvictorl@gmail.com>
  */
-interface EncryptorInterface
+interface EncryptorInterface extends \Ambta\DoctrineEncryptBundle\Encryptors\EncryptorInterface
 {
     /**
      * @param string $data Plain text to encrypt
