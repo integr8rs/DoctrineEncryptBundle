@@ -2,10 +2,12 @@
 
 namespace DoctrineEncryptBundle\DoctrineEncryptBundle\Subscribers;
 
+use Ambta\DoctrineEncryptBundle\Encryptors\EncryptorInterface;
 use Ambta\DoctrineEncryptBundle\Exception\DoctrineEncryptBundleException as parentBundleException;
 use Ambta\DoctrineEncryptBundle\Exception\UnableToEncryptException as UnableToEncryptParentBundleException;
 use Ambta\DoctrineEncryptBundle\Exception\UnableToDecryptException as UnableToDecryptParentBundleException;
 use Doctrine\ORM\EntityManagerInterface;
+use DoctrineEncryptBundle\DoctrineEncryptBundle\Configuration\Encrypted;
 use DoctrineEncryptBundle\DoctrineEncryptBundle\Exception\DoctrineEncryptBundleException;
 use DoctrineEncryptBundle\DoctrineEncryptBundle\Exception\UnableToDecryptException;
 use DoctrineEncryptBundle\DoctrineEncryptBundle\Exception\UnableToEncryptException;
@@ -15,6 +17,13 @@ use DoctrineEncryptBundle\DoctrineEncryptBundle\Exception\UnableToEncryptExcepti
  */
 final class DoctrineEncryptSubscriber extends \Ambta\DoctrineEncryptBundle\Subscribers\DoctrineEncryptSubscriber
 {
+    public function __construct($annReader, EncryptorInterface $encryptor)
+    {
+        parent::__construct($annReader, $encryptor);
+
+        $this->annotationName = Encrypted::class;
+    }
+
     /**
      * Process (encrypt/decrypt) entities fields.
      *
