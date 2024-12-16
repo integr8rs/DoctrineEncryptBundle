@@ -323,6 +323,10 @@ You can start using these exceptions today by setting \'ambta_doctrine_encrypt.w
             ],
             [
                 'ambta_doctrine_encrypt.encryptor_class_name'     => HaliteEncryptor::class,
+                'ambta_doctrine_encrypt.supported_encryptors'     => [
+                    'halite' => \Ambta\DoctrineEncryptBundle\Encryptors\DefuseEncryptor::class,
+                    'defuse' => \Ambta\DoctrineEncryptBundle\Encryptors\HaliteEncryptor::class,
+                ],
                 'ambta_doctrine_encrypt.enable_secret_generation' => true,
                 'ambta_doctrine_encrypt.secret_directory_path'    => '%kernel.project_dir%',
             ],
@@ -351,6 +355,10 @@ You can start using these exceptions today by setting \'ambta_doctrine_encrypt.w
             ],
             [
                 'ambta_doctrine_encrypt.encryptor_class_name' => HaliteEncryptor::class,
+                'ambta_doctrine_encrypt.supported_encryptors'     => [
+                    'halite' => \Ambta\DoctrineEncryptBundle\Encryptors\DefuseEncryptor::class,
+                    'defuse' => \Ambta\DoctrineEncryptBundle\Encryptors\HaliteEncryptor::class,
+                ],
                 'ambta_doctrine_encrypt.secret'               => ''
             ],
             [
@@ -375,6 +383,10 @@ You can start using these exceptions today by setting \'ambta_doctrine_encrypt.w
             ],
             [
                 'ambta_doctrine_encrypt.encryptor_class_name'     => HaliteEncryptor::class,
+                'ambta_doctrine_encrypt.supported_encryptors'     => [
+                    'halite' => \Ambta\DoctrineEncryptBundle\Encryptors\DefuseEncryptor::class,
+                    'defuse' => \Ambta\DoctrineEncryptBundle\Encryptors\HaliteEncryptor::class,
+                ],
                 'ambta_doctrine_encrypt.enable_secret_generation' => true,
                 'ambta_doctrine_encrypt.secret_directory_path'    => '%kernel.project_dir%',
             ],
@@ -402,6 +414,10 @@ You can start using these exceptions today by setting \'ambta_doctrine_encrypt.w
             ],
             [
                 'ambta_doctrine_encrypt.encryptor_class_name'     => HaliteEncryptor::class,
+                'ambta_doctrine_encrypt.supported_encryptors'     => [
+                    'halite' => \Ambta\DoctrineEncryptBundle\Encryptors\DefuseEncryptor::class,
+                    'defuse' => \Ambta\DoctrineEncryptBundle\Encryptors\HaliteEncryptor::class,
+                ],
                 'ambta_doctrine_encrypt.enable_secret_generation' => true,
                 'ambta_doctrine_encrypt.secret_directory_path'    => '%kernel.project_dir%',
             ],
@@ -429,6 +445,10 @@ You can start using these exceptions today by setting \'ambta_doctrine_encrypt.w
             ],
             [
                 'ambta_doctrine_encrypt.encryptor_class_name'     => HaliteEncryptor::class,
+                'ambta_doctrine_encrypt.supported_encryptors'     => [
+                    'halite' => \Ambta\DoctrineEncryptBundle\Encryptors\DefuseEncryptor::class,
+                    'defuse' => \Ambta\DoctrineEncryptBundle\Encryptors\HaliteEncryptor::class,
+                ],
                 'ambta_doctrine_encrypt.enable_secret_generation' => true,
                 'ambta_doctrine_encrypt.secret_directory_path'    => '%kernel.project_dir%',
             ],
@@ -458,6 +478,10 @@ You can start using these exceptions today by setting \'ambta_doctrine_encrypt.w
             ],
             [
                 'ambta_doctrine_encrypt.encryptor_class_name' => HaliteEncryptor::class,
+                'ambta_doctrine_encrypt.supported_encryptors'     => [
+                    'halite' => \Ambta\DoctrineEncryptBundle\Encryptors\DefuseEncryptor::class,
+                    'defuse' => \Ambta\DoctrineEncryptBundle\Encryptors\HaliteEncryptor::class,
+                ],
                 'ambta_doctrine_encrypt.secret'               => '',
             ],
             [

@@ -8,7 +8,6 @@ use Ambta\DoctrineEncryptBundle\Mapping\AttributeReader;
 use Ambta\DoctrineEncryptBundle\Subscribers\DoctrineEncryptSubscriber;
 use Doctrine\Bundle\DoctrineBundle\Middleware\DebugMiddleware;
 use Doctrine\Common\Annotations\AnnotationReader;
-use Doctrine\DBAL\Configuration;
 use Doctrine\DBAL\DriverManager;
 use Doctrine\DBAL\Logging\DebugStack;
 use Doctrine\ORM\EntityManager;

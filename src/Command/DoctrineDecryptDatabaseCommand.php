@@ -36,13 +36,12 @@ class DoctrineDecryptDatabaseCommand extends AbstractCommand
         $question = $this->getHelper('question');
 
         // Get list of supported encryptors
-        $supportedExtensions = DoctrineEncryptExtension::SupportedEncryptorClasses;
-        $batchSize           = $input->getArgument('batchSize');
+        $batchSize = $input->getArgument('batchSize');
 
         // If encryptor has been set use that encryptor else use default
         if ($input->getArgument('encryptor')) {
-            if (isset($supportedExtensions[$input->getArgument('encryptor')])) {
-                $reflection = new \ReflectionClass($supportedExtensions[$input->getArgument('encryptor')]);
+            if (isset($this->supportedEncryptors[$input->getArgument('encryptor')])) {
+                $reflection = new \ReflectionClass($this->supportedEncryptors[$input->getArgument('encryptor')]);
                 $encryptor  = $reflection->newInstance();
                 $this->subscriber->setEncryptor($encryptor);
             } else {
@@ -51,7 +50,7 @@ class DoctrineDecryptDatabaseCommand extends AbstractCommand
                 } else {
                     $output->writeln('Given encryptor does not exists');
 
-                    $output->writeln('Supported encryptors: '.implode(', ', array_keys($supportedExtensions)));
+                    $output->writeln('Supported encryptors: '.implode(', ', array_keys($this->supportedEncryptors)));
 
                     return defined('AbstractCommand::INVALID') ? AbstractCommand::INVALID : 2;
                 }

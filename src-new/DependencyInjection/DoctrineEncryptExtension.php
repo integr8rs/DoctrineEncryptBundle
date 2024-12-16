@@ -2,15 +2,20 @@
 
 namespace DoctrineEncryptBundle\DoctrineEncryptBundle\DependencyInjection;
 
-use Ambta\DoctrineEncryptBundle\DependencyInjection\Configuration;
+use DoctrineEncryptBundle\DoctrineEncryptBundle\Encryptors\DefuseEncryptor;
+use DoctrineEncryptBundle\DoctrineEncryptBundle\Encryptors\HaliteEncryptor;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\HttpKernel\Kernel;
 
 /**
  * @internal
  */
 final class DoctrineEncryptExtension extends \Ambta\DoctrineEncryptBundle\DependencyInjection\DoctrineEncryptExtension
 {
+    public const SupportedEncryptorClasses = [
+        'Defuse' => DefuseEncryptor::class,
+        'Halite' => HaliteEncryptor::class,
+    ];
+
     public function load(array $configs, ContainerBuilder $container): void
     {
         $config = $this->processConfiguration(new Configuration($this->getAlias()), $configs);
