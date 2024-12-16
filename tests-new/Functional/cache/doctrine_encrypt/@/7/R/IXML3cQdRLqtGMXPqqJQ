@@ -1,3 +1,0 @@
-0
-DoctrineEncryptBundle%255CDoctrineEncryptBundle%255CTests%255CFunctional%255Cfixtures%255CEntity%255CDateTimeJsonArrayTarget%2524id
-a:3:{i:0;O:23:"Doctrine\ORM\Mapping\Id":0:{}i:1;O:27:"Doctrine\ORM\Mapping\Column":13:{s:4:"name";N;s:4:"type";s:7:"integer";s:6:"length";N;s:9:"precision";N;s:5:"scale";N;s:6:"unique";b:0;s:8:"nullable";b:0;s:10:"insertable";b:1;s:9:"updatable";b:1;s:8:"enumType";N;s:7:"options";a:0:{}s:16:"columnDefinition";N;s:9:"generated";N;}i:2;O:35:"Doctrine\ORM\Mapping\GeneratedValue":1:{s:8:"strategy";s:4:"AUTO";}}
