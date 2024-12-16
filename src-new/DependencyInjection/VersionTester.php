@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Ambta\DoctrineEncryptBundle\DependencyInjection;
+namespace DoctrineEncryptBundle\DoctrineEncryptBundle\DependencyInjection;
 
 use Symfony\Component\HttpKernel\Kernel;
 

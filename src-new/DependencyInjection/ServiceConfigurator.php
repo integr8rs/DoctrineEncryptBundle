@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace DoctrineEncryptBundle\DoctrineEncryptBundle\DependencyInjection;
 
 use Ambta\DoctrineEncryptBundle\DependencyInjection\DoctrineEncryptExtension as AmbtaExtension;
-use Ambta\DoctrineEncryptBundle\DependencyInjection\VersionTester;
 use DoctrineEncryptBundle\DoctrineEncryptBundle\DependencyInjection\DoctrineEncryptExtension as BundleExtension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
@@ -25,11 +24,8 @@ final class ServiceConfigurator
     /** @var bool */
     private $useNewNames;
 
-    /** @var string */
-    private $prefix;
-
     /** @var int */
-    private $index;
+    private $nameIndex;
 
     private const NAMES = [
         'parameters' => [
@@ -99,11 +95,9 @@ final class ServiceConfigurator
         $this->useNewNames   = $useNewNames;
 
         if ($this->useNewNames) {
-            $this->prefix = 'doctrine_encrypt_bundle.';
-            $this->index = 1;
+            $this->nameIndex = 1;
         } else {
-            $this->prefix = 'ambta_doctrine_encrypt.';
-            $this->index = 0;
+            $this->nameIndex = 0;
         }
     }
 
@@ -114,12 +108,12 @@ final class ServiceConfigurator
 
     private function getParameterName(string $name): string
     {
-        return self::NAMES['parameters'][$name][$this->index];
+        return self::NAMES['parameters'][$name][$this->nameIndex];
     }
 
     private function getServiceName(string $name): string
     {
-        return self::NAMES['services'][$name][$this->index];
+        return self::NAMES['services'][$name][$this->nameIndex];
     }
 
     private function registerService(ContainerBuilder $container, string $name, string $oldClass, string $newClass): Definition
@@ -197,9 +191,14 @@ final class ServiceConfigurator
             trigger_deprecation(
                 'doctrineencryptbundle/doctrine-encrypt-bundle',
                 '5.4.2',
-                <<<EOF
+                $this->useNewNames
+                    ? <<<EOF
+Starting from 6.0, all exceptions thrown by this library will be wrapped by \DoctrineEncryptBundle\DoctrineEncryptBundle\Exception\DoctrineEncryptBundleException or a child-class of it.
+You can start using these exceptions today by setting 'doctrine_encrypt.wrap_exceptions' to TRUE.
+EOF
+                    : <<<EOF
 Starting from 6.0, all exceptions thrown by this library will be wrapped by \Ambta\DoctrineEncryptBundle\Exception\DoctrineEncryptBundleException or a child-class of it.
-You can start using these exceptions today by setting '{$this->prefix}wrap_exceptions' to TRUE.
+You can start using these exceptions today by setting 'ambta_doctrine_encrypt.wrap_exceptions' to TRUE.
 EOF
             );
         }
@@ -309,6 +308,7 @@ EOF
             ->setArguments([
                 new Parameter($this->getParameterName('secret_directory_path')),
                 new Parameter($this->getParameterName('enable_secret_generation')),
+                new Parameter($this->getParameterName('supported_encryptors')),
             ])
         ;
     }
@@ -322,7 +322,7 @@ EOF
                 $container,
                 'orm_subscriber',
                 \Ambta\DoctrineEncryptBundle\Subscribers\DoctrineEncryptSubscriber::class,
-                \Ambta\DoctrineEncryptBundle\Subscribers\DoctrineEncryptSubscriber::class
+                \DoctrineEncryptBundle\DoctrineEncryptBundle\Subscribers\DoctrineEncryptSubscriber::class
             )
             ->setArguments([
                 new Reference($this->getServiceName('annotation_reader')),
@@ -369,7 +369,7 @@ EOF
             $container,
             'attribute_reader',
             \Ambta\DoctrineEncryptBundle\Mapping\AttributeReader::class,
-            \DoctrineEncryptBundle\DoctrineEncryptBundle\Mapping\AttributeReader::class,
+            \DoctrineEncryptBundle\DoctrineEncryptBundle\Mapping\AttributeReader::class
         );
 
         $this
@@ -377,7 +377,7 @@ EOF
                 $container,
                 'annotation_reader',
                 \Ambta\DoctrineEncryptBundle\Mapping\AttributeAnnotationReader::class,
-                \DoctrineEncryptBundle\DoctrineEncryptBundle\Mapping\AttributeAnnotationReader::class,
+                \DoctrineEncryptBundle\DoctrineEncryptBundle\Mapping\AttributeAnnotationReader::class
             )
             ->setArguments([
                 new Reference($this->getServiceName('attribute_reader')),

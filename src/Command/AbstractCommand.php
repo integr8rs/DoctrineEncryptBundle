@@ -48,9 +48,9 @@ abstract class AbstractCommand extends Command
         array $supportedEncryptors
     ) {
         parent::__construct();
-        $this->entityManager    = $entityManager;
-        $this->annotationReader = $annotationReader;
-        $this->subscriber       = $subscriber;
+        $this->entityManager       = $entityManager;
+        $this->annotationReader    = $annotationReader;
+        $this->subscriber          = $subscriber;
         $this->supportedEncryptors = $supportedEncryptors;
     }
 

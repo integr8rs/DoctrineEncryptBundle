@@ -4,7 +4,7 @@ namespace Ambta\DoctrineEncryptBundle;
 
 use Ambta\DoctrineEncryptBundle\DependencyInjection\DeprecatedDoctrineEncryptExtension;
 use Ambta\DoctrineEncryptBundle\DependencyInjection\DoctrineEncryptExtension;
-use Ambta\DoctrineEncryptBundle\DependencyInjection\VersionTester;
+use DoctrineEncryptBundle\DoctrineEncryptBundle\DependencyInjection\VersionTester;
 use JetBrains\PhpStorm\Pure;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;

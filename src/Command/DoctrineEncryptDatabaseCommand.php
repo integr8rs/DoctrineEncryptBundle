@@ -2,7 +2,6 @@
 
 namespace Ambta\DoctrineEncryptBundle\Command;
 
-use Ambta\DoctrineEncryptBundle\DependencyInjection\DoctrineEncryptExtension;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
