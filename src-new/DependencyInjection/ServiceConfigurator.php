@@ -104,9 +104,9 @@ final class ServiceConfigurator
             trigger_deprecation(
                 'doctrineencryptbundle/doctrine-encrypt-bundle',
                 '5.4.2',
-                <<<'EOF'
+                <<<EOF
 Starting from 6.0, all exceptions thrown by this library will be wrapped by \Ambta\DoctrineEncryptBundle\Exception\DoctrineEncryptBundleException or a child-class of it.
-You can start using these exceptions today by setting $this->longPrefix.'.wrap_exceptions' to TRUE.
+You can start using these exceptions today by setting '{$this->prefix}wrap_exceptions' to TRUE.
 EOF
             );
         }
