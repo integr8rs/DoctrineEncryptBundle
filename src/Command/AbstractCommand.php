@@ -32,6 +32,9 @@ abstract class AbstractCommand extends Command
      */
     protected $annotationReader;
 
+    /** @var array<string,string> */
+    protected $supportedEncryptors;
+
     /**
      * AbstractCommand constructor.
      *
@@ -41,12 +44,14 @@ abstract class AbstractCommand extends Command
     public function __construct(
         EntityManagerInterface $entityManager,
         $annotationReader,
-        DoctrineEncryptSubscriber $subscriber
+        DoctrineEncryptSubscriber $subscriber,
+        array $supportedEncryptors
     ) {
         parent::__construct();
-        $this->entityManager    = $entityManager;
-        $this->annotationReader = $annotationReader;
-        $this->subscriber       = $subscriber;
+        $this->entityManager       = $entityManager;
+        $this->annotationReader    = $annotationReader;
+        $this->subscriber          = $subscriber;
+        $this->supportedEncryptors = $supportedEncryptors;
     }
 
     /**
