@@ -33,6 +33,8 @@ class AmbtaDoctrineEncryptBundleTest extends TestCase
     }
 
     /**
+     * @runInSeparateProcess
+     *
      * @group legacy
      */
     public function testContainerIsAbleToConfigFromOldNamespace(): void
@@ -59,6 +61,8 @@ Starting from 6.0, only `doctrine_encrypt_bundle` will be supported.');
     }
 
     /**
+     * @runInSeparateProcess
+     *
      * @group legacy
      */
     public function testContainerIsAbleToConfigFromNewNamespace(): void

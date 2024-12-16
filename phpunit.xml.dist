@@ -19,6 +19,10 @@
         <testsuite name="functional-new">
             <directory suffix="Test.php">./tests-new/Functional</directory>
         </testsuite>
+        <testsuite name="test">
+            <directory suffix="Test.php">./tests-new/Functional/BasicQueryTest</directory>
+            <directory suffix="Test.php">./tests-new/Unit/DependencyInjection</directory>
+        </testsuite>
     </testsuites>
 
     <coverage>
@@ -32,7 +36,7 @@
     </coverage>
 
     <php>
-        <ini name="error_reporting" value="E_ALL ^ E_DEPRECATED" />
+        <ini name="error_reporting" value="E_ALL" />
         <env name="SYMFONY_DEPRECATIONS_HELPER" value="weak" />
     </php>
 </phpunit>

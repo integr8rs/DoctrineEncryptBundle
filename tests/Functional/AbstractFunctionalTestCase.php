@@ -90,8 +90,6 @@ abstract class AbstractFunctionalTestCase extends TestCase
         $annotationReader = new AttributeAnnotationReader(new AttributeReader(), new AnnotationReader(), $annotationCacheDirectory);
         $this->subscriber = new DoctrineEncryptSubscriber($annotationReader, $this->encryptor);
         $this->entityManager->getEventManager()->addEventSubscriber($this->subscriber);
-
-        error_reporting(E_ALL);
     }
 
     public function setUpPHP8(): void
@@ -133,8 +131,6 @@ abstract class AbstractFunctionalTestCase extends TestCase
         $this->createNewCacheDirectory($annotationCacheDirectory);
         $this->subscriber = new DoctrineEncryptSubscriber(new AttributeReader(), $this->encryptor);
         $this->entityManager->getEventManager()->addEventSubscriber($this->subscriber);
-
-        error_reporting(E_ALL);
     }
 
     public function tearDown(): void

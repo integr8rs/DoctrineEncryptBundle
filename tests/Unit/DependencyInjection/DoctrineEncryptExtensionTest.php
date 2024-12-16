@@ -211,6 +211,8 @@ class DoctrineEncryptExtensionTest extends TestCase
     }
 
     /**
+     * @runInSeparateProcess
+     *
      * @group legacy
      */
     public function testWrapExceptionsTriggersDeprecationWarningWhenNotDefiningTheOption(): void
@@ -225,6 +227,8 @@ You can start using these exceptions today by setting \'ambta_doctrine_encrypt.w
     }
 
     /**
+     * @runInSeparateProcess
+     *
      * @group legacy
      */
     public function testWrapExceptionsTriggersDeprecationWarningWhenDisabled(): void
@@ -239,6 +243,8 @@ You can start using these exceptions today by setting \'ambta_doctrine_encrypt.w
     }
 
     /**
+     * @runInSeparateProcess
+     *
      * @group legacy
      */
     public function testWrapExceptionsDoesNotTriggerDeprecationWarningWhenEnabled(): void
@@ -304,8 +310,11 @@ You can start using these exceptions today by setting \'ambta_doctrine_encrypt.w
 
         // Mock additional services
         $container->set('doctrine.orm.entity_manager', $this->createMock(EntityManagerInterface::class));
-        $container->setParameter('kernel.project_dir', '');
-        $container->setParameter('kernel.cache_dir', '');
+        $container->setParameter('kernel.project_dir', $this->temporaryDirectory);
+        $container->setParameter('kernel.cache_dir', $this->temporaryDirectory);
+
+        // set directory path to writable directory
+        $container->setParameter('ambta_doctrine_encrypt.secret_directory_path', $this->temporaryDirectory);
 
         // Assert all services are gettable
         foreach ($expectedServices as $expectedService => $class) {

@@ -19,6 +19,9 @@ use PHPUnit\Framework\Constraint\StringContains;
 use PHPUnit\Framework\TestCase;
 use Symfony\Bridge\Doctrine\Middleware\Debug\DebugDataHolder;
 
+/**
+ * @runInSeparateProcess
+ */
 abstract class AbstractFunctionalTestCase extends TestCase
 {
     /** @var DoctrineEncryptSubscriber */
@@ -90,8 +93,6 @@ abstract class AbstractFunctionalTestCase extends TestCase
         $annotationReader = new AttributeAnnotationReader(new AttributeReader(), new AnnotationReader(), $annotationCacheDirectory);
         $this->subscriber = new DoctrineEncryptSubscriber($annotationReader, $this->encryptor);
         $this->entityManager->getEventManager()->addEventSubscriber($this->subscriber);
-
-        error_reporting(E_ALL);
     }
 
     public function setUpPHP8(): void
@@ -133,19 +134,17 @@ abstract class AbstractFunctionalTestCase extends TestCase
         $this->createNewCacheDirectory($annotationCacheDirectory);
         $this->subscriber = new DoctrineEncryptSubscriber(new AttributeReader(), $this->encryptor);
         $this->entityManager->getEventManager()->addEventSubscriber($this->subscriber);
-
-        error_reporting(E_ALL);
     }
 
     public function tearDown(): void
     {
         $this->entityManager->getConnection()->close();
         unlink($this->dbFile);
+        $this->recurseRmdir(__DIR__.'/cache');
     }
 
     protected function createNewCacheDirectory(string $annotationCacheDirectory): void
     {
-        $this->recurseRmdir($annotationCacheDirectory);
         mkdir($annotationCacheDirectory);
     }
 

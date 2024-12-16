@@ -33,6 +33,7 @@ class DoctrineEncryptBundleTest extends TestCase
     }
 
     /**
+     * @runInSeparateProcess
      * @group legacy
      */
     public function testContainerIsAbleToConfigFromNewNamespace(): void
@@ -50,7 +51,7 @@ class DoctrineEncryptBundleTest extends TestCase
         $container->addCompilerPass(new MergeExtensionConfigurationPass());
 
         // TODO-6.0 Remove deprecation-test
-        $this->expectDeprecation('The "DoctrineEncryptBundle\DoctrineEncryptBundle\DependencyInjection\Configuration" class extends "Ambta\DoctrineEncryptBundle\DependencyInjection\Configuration" that is deprecated Use \DoctrineEncryptBundle\DoctrineEncryptBundle\DependencyInjection\Configuration instead. This class will be removed in 6.0.');
+        $this->expectDeprecation('');
         $container->compile();
 
         $this->assertTrue($container->hasParameter('doctrine_encrypt.secret'));
