@@ -49,7 +49,7 @@
 	"autoload-dev": {
 		"psr-4": {
 			"Ambta\\DoctrineEncryptBundle\\Tests\\": "tests/",
-			"DoctrineEncryptBundle\\DoctrineEncryptBundle\\Tests\\": "src-new/"
+			"DoctrineEncryptBundle\\DoctrineEncryptBundle\\Tests\\": "tests-new/"
 		}
 	},
 	"config": {
