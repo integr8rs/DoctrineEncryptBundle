@@ -11,7 +11,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class DefaultController extends AbstractController
 {
     #[Route(name: 'home', path: '/')]
-    public function index(\App\Repository\Attribute\SecretRepository $secretUsingAttributesRepository): Response
+    public function index(\App\Repository\SecretRepository $secretUsingAttributesRepository): Response
     {
         $secrets = $secretUsingAttributesRepository->findAll();
 
@@ -27,7 +27,7 @@ class DefaultController extends AbstractController
 
         $type = $request->query->get('type');
         if ($type === 'attribute') {
-            $secret = new \App\Entity\Attribute\Secret();
+            $secret = new \App\Entity\Secret();
         } else {
             return new Response('Type is only allowed to be "attribute"');
         }
