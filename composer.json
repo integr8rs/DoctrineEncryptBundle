@@ -27,7 +27,8 @@
 		"phpcompatibility/php-compatibility": "^9.3",
 		"symfony/phpunit-bridge": "^7.0",
 		"friendsofphp/php-cs-fixer": "3.64.0",
-		"symfony/yaml": "^5.4|^6.0|^7.0"
+		"symfony/yaml": "^5.4|^6.0|^7.0",
+		"rector/rector": "^1.2"
 	},
 	"suggest": {
 		"defuse/php-encryption": "Alternative for halite for use with older php-versions",
