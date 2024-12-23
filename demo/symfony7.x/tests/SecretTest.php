@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Tests;
+namespace DoctrineEncryptBundle\Demo\Symfony7x\Tests;
 
-use App\Entity\Secret;
 use Doctrine\ORM\EntityManagerInterface;
+use DoctrineEncryptBundle\Demo\Symfony7x\Entity\Secret;
 use DoctrineEncryptBundle\DoctrineEncryptBundle\Subscribers\DoctrineEncryptSubscriber;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 

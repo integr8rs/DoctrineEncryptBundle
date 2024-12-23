@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Repository;
+namespace DoctrineEncryptBundle\Demo\Symfony7x\Repository;
 
-use App\Entity\Secret;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use DoctrineEncryptBundle\Demo\Symfony7x\Entity\Secret;
 
 /**
  * @method Secret|null find($id, $lockMode = null, $lockVersion = null)

@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Tests;
+namespace DoctrineEncryptBundle\Demo\Symfony6x\Tests;
 
-use App\Entity;
 use Doctrine\ORM\EntityManagerInterface;
+use DoctrineEncryptBundle\Demo\Symfony6x\Entity;
 use DoctrineEncryptBundle\DoctrineEncryptBundle\Subscribers\DoctrineEncryptSubscriber;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
@@ -57,8 +57,8 @@ class SecretTest extends KernelTestCase
     }
 
     /**
-     * @covers \App\Entity\Annotation\Secret::getSecret
-     * @covers \App\Entity\Annotation\Secret::getName
+     * @covers \DoctrineEncryptBundle\Demo\Symfony6x\Entity\Annotation\Secret::getSecret
+     * @covers \DoctrineEncryptBundle\Demo\Symfony6x\Entity\Annotation\Secret::getName
      */
     public function testAnnotationSecretsAreEncryptedInDatabase()
     {
@@ -66,8 +66,8 @@ class SecretTest extends KernelTestCase
     }
 
     /**
-     * @covers \App\Entity\Attribute\Secret::getSecret
-     * @covers \App\Entity\Attribute\Secret::getName
+     * @covers \DoctrineEncryptBundle\Demo\Symfony6x\Entity\Attribute\Secret::getSecret
+     * @covers \DoctrineEncryptBundle\Demo\Symfony6x\Entity\Attribute\Secret::getName
      *
      * @requires PHP 8.0
      */

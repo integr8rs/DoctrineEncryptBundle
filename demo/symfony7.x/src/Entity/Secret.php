@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Entity;
+namespace DoctrineEncryptBundle\Demo\Symfony7x\Entity;
 
-use App\Repository\SecretRepository;
 use Doctrine\ORM\Mapping as ORM;
+use DoctrineEncryptBundle\Demo\Symfony7x\Repository\SecretRepository;
 use DoctrineEncryptBundle\DoctrineEncryptBundle\Configuration\Encrypted;
 
 #[ORM\Table(name: 'secrets_using_attributes')]
