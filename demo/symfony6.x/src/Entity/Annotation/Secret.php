@@ -2,7 +2,7 @@
 
 namespace App\Entity\Annotation;
 
-use Ambta\DoctrineEncryptBundle\Configuration\Encrypted;
+use DoctrineEncryptBundle\DoctrineEncryptBundle\Configuration\Encrypted;
 use App\Repository\Annotation\SecretRepository;
 use Doctrine\ORM\Mapping as ORM;
 

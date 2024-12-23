@@ -2,9 +2,9 @@
 
 namespace App\Entity\Attribute;
 
-use Ambta\DoctrineEncryptBundle\Configuration\Encrypted;
 use App\Repository\Attribute\SecretRepository;
 use Doctrine\ORM\Mapping as ORM;
+use DoctrineEncryptBundle\DoctrineEncryptBundle\Configuration\Encrypted;
 
 #[ORM\Table(name: 'secrets_using_attributes')]
 #[ORM\Entity(repositoryClass: SecretRepository::class)]
