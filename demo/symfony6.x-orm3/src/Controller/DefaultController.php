@@ -13,7 +13,7 @@ class DefaultController extends AbstractController
     /**
      * @Route(name="home", path="/")
      */
-    public function index(\App\Repository\Attribute\SecretRepository $secretRepository): Response
+    public function index(\App\Repository\SecretRepository $secretRepository): Response
     {
         return $this->render('index.html.twig', ['secrets' => $secretRepository->findAll()]);
     }
