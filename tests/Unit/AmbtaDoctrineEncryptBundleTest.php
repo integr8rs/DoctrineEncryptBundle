@@ -51,8 +51,8 @@ class AmbtaDoctrineEncryptBundleTest extends TestCase
 
         $container->addCompilerPass(new MergeExtensionConfigurationPass());
 
-        $this->expectDeprecation('Since doctrineencryptbundle/doctrine-encrypt-bundle 5.4.2: Using `ambta_doctrine_encrypt` as the configuration-key is deprecated and you should replace this with `doctrine_encrypt_bundle`.
-Starting from 6.0, only `doctrine_encrypt_bundle` will be supported.');
+        $this->expectDeprecation('Since doctrineencryptbundle/doctrine-encrypt-bundle 5.4.3: Using `ambta_doctrine_encrypt` as the configuration-key is deprecated and you should replace this with `doctrine_encrypt`.
+Starting from 6.0, only `doctrine_encrypt` will be supported.');
 
         $container->compile();
 
@@ -79,7 +79,11 @@ Starting from 6.0, only `doctrine_encrypt_bundle` will be supported.');
 
         $container->addCompilerPass(new MergeExtensionConfigurationPass());
 
-        $this->expectDeprecation('');
+        $this->expectDeprecation(<<<'EOF'
+Since doctrineencryptbundle/doctrine-encrypt-bundle 5.4.3: `Ambta\DoctrineEncryptBundle\AmbtaDoctrineEncryptBundle` has been replaced by `DoctrineEncryptBundle\DoctrineEncryptBundle\DoctrineEncryptBundle`.
+Starting from 6.0, only `DoctrineEncryptBundle\DoctrineEncryptBundle\DoctrineEncryptBundle` will be supported.
+EOF
+        );
         $container->compile();
 
         $this->assertTrue($container->hasParameter('ambta_doctrine_encrypt.secret'));

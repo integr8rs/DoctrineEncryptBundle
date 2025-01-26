@@ -3,6 +3,5 @@
 * [ ] Remove wrap_exceptions from configuration of the bundle
 * [ ] Remove DeprecatedDoctrineEncryptExtension
 * [ ] Remove tests and demo using old `ambta_doctrine_encrypt` as configuration-key
-* [ ] Remove src-new and tests-new while replacing the contents of src/tests with it's classes
+* [ ] Remove src-new and tests-new while replacing the contents of src/tests with its classes
 * [ ] **PROPOSAL** Drop support for symfony 5.4 / php 7.x/8.0
-* [ ] 

@@ -23,10 +23,10 @@ class DeprecatedDoctrineEncryptExtension extends DoctrineEncryptExtension
         if (!empty($configs)) {
             trigger_deprecation(
                 'doctrineencryptbundle/doctrine-encrypt-bundle',
-                '5.4.2',
+                '5.4.3',
                 <<<'EOF'
-Using `ambta_doctrine_encrypt` as the configuration-key is deprecated and you should replace this with `doctrine_encrypt_bundle`.
-Starting from 6.0, only `doctrine_encrypt_bundle` will be supported.
+Using `ambta_doctrine_encrypt` as the configuration-key is deprecated and you should replace this with `doctrine_encrypt`.
+Starting from 6.0, only `doctrine_encrypt` will be supported.
 EOF
             );
 
