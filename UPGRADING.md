@@ -1,63 +1,73 @@
 # Upgrading to 5.5
-## Upgrading to new namespace
-The bundle is migrating to a new namespace, to have it in line with the name of the organization managing the bundle.
-To ease the migration to the next new major version, you can migrate to this by following the steps written next.
 
-This is optional in v5.5, but required for v6.0.
+## Migrating to the New Namespace
 
-To migrate your project to use the new namespace:
-* In bundles.php, use `\DoctrineEncryptBundle\DoctrineEncryptBundle\DoctrineEncryptBundle` instead of `\Ambta\DoctrineEncryptBundle\AmbtaDoctrineEncryptBundle`
-* Change your configuration-key in `config/packages/ambta_doctrine_encrypt.yaml` from `ambta_doctrine_encrypt` to `doctrine_encrypt`
-* Rename `ambta_doctrine_encrypt.yaml` to `doctrine_encrypt.yaml`
-* Replace namespace `Ambta\DoctrineEncryptBundle` with `DoctrineEncryptBundle\DoctrineEncryptBundle`
-  * This can be done automagically by [rector](https://github.com/rectorphp/rector) by using `DoctrineEncryptBundle\DoctrineEncryptBundle\Rector\Set\DoctrineEncryptBundleSetList`:
-  ```php
-  <?php
+The library is transitioning to a new namespace to align with the organization managing the bundle. This migration is optional in version 5.5 but will be required for version 6.0.
 
-  use DoctrineEncryptBundle\DoctrineEncryptBundle\Rector\Set\DoctrineEncryptBundleSetList;
-  use Rector\Config\RectorConfig;
-  
-  return RectorConfig::configure()
-    ->withPaths([
-      __DIR__.'/src/',
-      __DIR__.'/tests/'
-    ])
-    ->withSets([
-        DoctrineEncryptBundleSetList::TO_DOCTRINE_ENCRYPT_BUNDLE_NAMESPACE,
-    ]);
-  ```
-* If you have custom services/configurations based on services/parameters from the bundle, please use the new names to depend on.
-  
-  | Type      | Old                                             | New                                       |
-  |-----------|-------------------------------------------------|-------------------------------------------|
-  | Parameter | ambta_doctrine_encrypt.secret                   | doctrine_encrypt.secret                   |
-  | Parameter | ambta_doctrine_encrypt.encryptor_class_name     | doctrine_encrypt.encryptor.class_name     |
-  | Parameter | ambta_doctrine_encrypt.enable_secret_generation | doctrine_encrypt.secret.enable_generation |
-  | Parameter | ambta_doctrine_encrypt.secret_directory_path    | doctrine_encrypt.secret.directory_path    |
-  | Parameter | ambta_doctrine_encrypt.supported_encryptors     | doctrine_encrypt.supported_encryptors     |
-  | Service   | ambta_doctrine_encrypt.encryptor                | doctrine_encrypt.encryptor                |
-  | Service   | ambta_doctrine_encrypt.secret_factory           | doctrine_encrypt.secret.factory           |
-  | Service   | ambta_doctrine_annotation_reader                | doctrine_encrypt.annotations.reader       |
-  | Service   | ambta_doctrine_attribute_reader                 | doctrine_encrypt.attributes.reader        |
-  | Service   | ambta_doctrine_encrypt.orm_subscriber           | doctrine_encrypt.orm.subscriber           |
-  | Service   | ambta_doctrine_encrypt.command.decrypt.database | doctrine_encrypt.command.decrypt_database |
-  | Service   | ambta_doctrine_encrypt.command.encrypt.database | doctrine_encrypt.command.encrypt_database |
-  | Service   | ambta_doctrine_encrypt.command.encrypt.status   | doctrine_encrypt.command.encrypt_status   |
+To migrate your project to the new namespace, follow these steps:
 
-Additionally, some classes have been made final to allow refactoring them more easily, as they will no longer be extendable.
+1. **Update `bundles.php`**:
+   - Replace `\Ambta\DoctrineEncryptBundle\AmbtaDoctrineEncryptBundle` with `\DoctrineEncryptBundle\DoctrineEncryptBundle\DoctrineEncryptBundle`.
 
-# Bundle-specific exceptions
-Instead of exceptions directly from halite or defuse, the bundle will throw a `\DoctrineEncryptBundle\DoctrineEncryptBundle\Exception\UnableToEncryptException`
-  or a `\DoctrineEncryptBundle\DoctrineEncryptBundle\Exception\UnableToDecryptException`, which both extend `\DoctrineEncryptBundle\DoctrineEncryptBundle\Exception\DoctrineEncryptBundleException`.
-The bundle will now throw a `\DoctrineEncryptBundle\DoctrineEncryptBundle\Exception\DoctrineEncryptBundleException` in case something goes wrong when encrypting/decrypting
+2. **Update Configuration Key**:
+   - In `config/packages/ambta_doctrine_encrypt.yaml`, change the configuration key from `ambta_doctrine_encrypt` to `doctrine_encrypt`.
 
-This is optional in v5.5, but required for v6.0.
+3. **Rename Configuration File**:
+   - Rename `ambta_doctrine_encrypt.yaml` to `doctrine_encrypt.yaml`.
 
-You can opt in to this **on v5.5** by setting `doctrine_encrypt.wrap_exceptions` to true
+4. **Update Namespace**:
+   - Within your project, replace the namespace `Ambta\DoctrineEncryptBundle` with `DoctrineEncryptBundle\DoctrineEncryptBundle`.
+   - This can be automated using [Rector](https://github.com/rectorphp/rector) with the following configuration:
+     ```php
+     <?php
+ 
+     use DoctrineEncryptBundle\DoctrineEncryptBundle\Rector\Set\DoctrineEncryptBundleSetList;
+     use Rector\Config\RectorConfig;
+ 
+     return RectorConfig::configure()
+       ->withPaths([
+         __DIR__.'/src/',
+         __DIR__.'/tests/'
+       ])
+       ->withSets([
+           DoctrineEncryptBundleSetList::TO_DOCTRINE_ENCRYPT_BUNDLE_NAMESPACE,
+       ]);
+     ```
 
-# Upgrading to 6.0 (not released yet)
-## Breaking changes
-* The library will throw bundle-specific exceptions
-* The library will use namespace `\DoctrineEncryptBundle\DoctrineEncryptBundle`, service-prefix `doctrine_encrypt` and config-namespace `doctrine_encrypt`.
+5. **Update Custom Services/Configurations**:
+   - If your project has custom services or configurations based on the bundle's services or parameters, update them to use the new names.
 
+   | Type      | Old                                             | New                                       |
+    |-----------|-------------------------------------------------|-------------------------------------------|
+   | Parameter | `ambta_doctrine_encrypt.secret`                 | `doctrine_encrypt.secret`                 |
+   | Parameter | `ambta_doctrine_encrypt.encryptor_class_name`   | `doctrine_encrypt.encryptor.class_name`   |
+   | Parameter | `ambta_doctrine_encrypt.enable_secret_generation` | `doctrine_encrypt.secret.enable_generation` |
+   | Parameter | `ambta_doctrine_encrypt.secret_directory_path`  | `doctrine_encrypt.secret.directory_path`  |
+   | Parameter | `ambta_doctrine_encrypt.supported_encryptors`   | `doctrine_encrypt.supported_encryptors`   |
+   | Service   | `ambta_doctrine_encrypt.encryptor`              | `doctrine_encrypt.encryptor`              |
+   | Service   | `ambta_doctrine_encrypt.secret_factory`         | `doctrine_encrypt.secret.factory`         |
+   | Service   | `ambta_doctrine_annotation_reader`              | `doctrine_encrypt.annotations.reader`     |
+   | Service   | `ambta_doctrine_attribute_reader`               | `doctrine_encrypt.attributes.reader`      |
+   | Service   | `ambta_doctrine_encrypt.orm_subscriber`         | `doctrine_encrypt.orm.subscriber`         |
+   | Service   | `ambta_doctrine_encrypt.command.decrypt.database` | `doctrine_encrypt.command.decrypt_database` |
+   | Service   | `ambta_doctrine_encrypt.command.encrypt.database` | `doctrine_encrypt.command.encrypt_database` |
+   | Service   | `ambta_doctrine_encrypt.command.encrypt.status` | `doctrine_encrypt.command.encrypt_status` |
 
+Additionally, some classes have been made final to facilitate refactoring, as they will no longer be extendable.
+
+## Bundle-Specific Exceptions
+
+The library will now throw bundle-specific exceptions:
+- `\DoctrineEncryptBundle\DoctrineEncryptBundle\Exception\UnableToEncryptException`
+- `\DoctrineEncryptBundle\DoctrineEncryptBundle\Exception\UnableToDecryptException`
+
+Both exceptions extend `\DoctrineEncryptBundle\DoctrineEncryptBundle\Exception\DoctrineEncryptBundleException`.
+
+This change is optional in version 5.5 but will be required for version 6.0. You can opt in by setting `doctrine_encrypt.wrap_exceptions` to `true`.
+
+# Upgrading to 6.0 (Not Released Yet)
+
+## Breaking Changes
+
+- The library will throw bundle-specific exceptions.
+- The library will use the namespace `\DoctrineEncryptBundle\DoctrineEncryptBundle`, service prefix `doctrine_encrypt`, and configuration namespace `doctrine_encrypt`.
