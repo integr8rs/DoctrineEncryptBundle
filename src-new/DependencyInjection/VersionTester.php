@@ -9,7 +9,7 @@ use Symfony\Component\HttpKernel\Kernel;
 /**
  * @internal
  */
-class VersionTester
+final class VersionTester
 {
     public function isSymfony7OrHigher(): bool
     {

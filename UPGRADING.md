@@ -1,7 +1,9 @@
-# Upgrading to new namespace
+# Upgrading to 5.5
+## Upgrading to new namespace
 The bundle is migrating to a new namespace, to have it in line with the name of the organization managing the bundle.
-To ease the migration to the next new major version, you can migrate to it in by setting a configuration parameter in 5.5.
-The old namespace will be removed in 6.0.
+To ease the migration to the next new major version, you can migrate to this by following the steps written next.
+
+This is optional in v5.5, but required for v6.0.
 
 To migrate your project to use the new namespace:
 * In bundles.php, use `\DoctrineEncryptBundle\DoctrineEncryptBundle\DoctrineEncryptBundle` instead of `\Ambta\DoctrineEncryptBundle\AmbtaDoctrineEncryptBundle`
@@ -42,12 +44,20 @@ To migrate your project to use the new namespace:
   | Service   | ambta_doctrine_encrypt.command.encrypt.database | doctrine_encrypt.command.encrypt_database |
   | Service   | ambta_doctrine_encrypt.command.encrypt.status   | doctrine_encrypt.command.encrypt_status   |
 
+Additionally, some classes have been made final to allow refactoring them more easily, as they will no longer be extendable.
+
+# Bundle-specific exceptions
+Instead of exceptions directly from halite or defuse, the bundle will throw a `\DoctrineEncryptBundle\DoctrineEncryptBundle\Exception\UnableToEncryptException`
+  or a `\DoctrineEncryptBundle\DoctrineEncryptBundle\Exception\UnableToDecryptException`, which both extend `\DoctrineEncryptBundle\DoctrineEncryptBundle\Exception\DoctrineEncryptBundleException`.
+The bundle will now throw a `\DoctrineEncryptBundle\DoctrineEncryptBundle\Exception\DoctrineEncryptBundleException` in case something goes wrong when encrypting/decrypting
+
+This is optional in v5.5, but required for v6.0.
+
+You can opt in to this **on v5.5** by setting `doctrine_encrypt.wrap_exceptions` to true
 
 # Upgrading to 6.0 (not released yet)
 ## Breaking changes
-### Bundle-specific exceptions
-* Instead of exceptions directly from halite or defuse, the bundle will throw a `\DoctrineEncryptBundle\DoctrineEncryptBundle\Exception\UnableToEncryptException` 
-  or a `\DoctrineEncryptBundle\DoctrineEncryptBundle\Exception\UnableToDecryptException`, which both extend `\DoctrineEncryptBundle\DoctrineEncryptBundle\Exception\DoctrineEncryptBundleException`.
-* The bundle will now throw a `\DoctrineEncryptBundle\DoctrineEncryptBundle\Exception\DoctrineEncryptBundleException` in case something goes wrong when encrypting/decrypting
-* **On 5.5** You can opt in to this by setting `doctrine_encrypt.wrap_exceptions` to true 
+* The library will throw bundle-specific exceptions
+* The library will use namespace `\DoctrineEncryptBundle\DoctrineEncryptBundle`, service-prefix `doctrine_encrypt` and config-namespace `doctrine_encrypt`.
+
 
