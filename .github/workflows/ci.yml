@@ -40,6 +40,9 @@ jobs:
       - name: "Trigger install for PHPUnit dependencies"
         run:  "vendor/bin/simple-phpunit --version"
 
+      - name: "Check declared dependencies"
+        run: "vendor/bin/composer-require-checker check"
+
       - name: "PHPStan"
         run:  "vendor/bin/phpstan analyze"
 
