@@ -88,18 +88,6 @@
     "phar-io/version": {
         "version": "3.1.1"
     },
-    "php-cs-fixer/shim": {
-        "version": "3.68",
-        "recipe": {
-            "repo": "github.com/symfony/recipes",
-            "branch": "main",
-            "version": "3.0",
-            "ref": "16422bf8eac6c3be42afe07d37e2abc89d2bdf6b"
-        },
-        "files": [
-            ".php-cs-fixer.dist.php"
-        ]
-    },
     "phpdocumentor/reflection-common": {
         "version": "2.2.0"
     },

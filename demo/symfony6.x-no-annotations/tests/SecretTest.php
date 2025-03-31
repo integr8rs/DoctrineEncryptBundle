@@ -13,7 +13,7 @@ class SecretTest extends KernelTestCase
     {
         parent::setUp();
 
-        self::bootKernel([]);
+        self::bootKernel();
     }
 
     public function test_secretsAreEncryptedInDatabase()

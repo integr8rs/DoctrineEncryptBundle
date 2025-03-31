@@ -57,8 +57,8 @@ class SecretTest extends KernelTestCase
     }
 
     /**
-     * @covers \Entity\Annotation\Secret::getSecret
-     * @covers \Entity\Annotation\Secret::getName
+     * @covers \App\Entity\Annotation\Secret::getSecret
+     * @covers \App\Entity\Annotation\Secret::getName
      */
     public function testAnnotationSecretsAreEncryptedInDatabase()
     {
@@ -66,8 +66,8 @@ class SecretTest extends KernelTestCase
     }
 
     /**
-     * @covers \Entity\Attribute\Secret::getSecret
-     * @covers \Entity\Attribute\Secret::getName
+     * @covers \App\Entity\Attribute\Secret::getSecret
+     * @covers \App\Entity\Attribute\Secret::getName
      *
      * @requires PHP 8.0
      */
