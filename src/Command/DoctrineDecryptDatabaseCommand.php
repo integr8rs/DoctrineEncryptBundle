@@ -6,6 +6,7 @@ use Ambta\DoctrineEncryptBundle\DependencyInjection\DoctrineEncryptExtension;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\Mapping\ClassMetadataInfo;
 use Symfony\Component\Console\Helper\ProgressBar;
+use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -34,6 +35,8 @@ class DoctrineDecryptDatabaseCommand extends AbstractCommand
     {
         // Get entity manager, question helper, subscriber service and annotation reader
         $question = $this->getHelper('question');
+
+        \assert($question instanceof QuestionHelper);
 
         // Get list of supported encryptors
         $supportedExtensions = DoctrineEncryptExtension::SupportedEncryptorClasses;

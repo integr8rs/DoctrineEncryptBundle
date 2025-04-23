@@ -4,6 +4,7 @@ namespace Ambta\DoctrineEncryptBundle\Command;
 
 use Ambta\DoctrineEncryptBundle\DependencyInjection\DoctrineEncryptExtension;
 use Symfony\Component\Console\Helper\ProgressBar;
+use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -31,7 +32,8 @@ class DoctrineEncryptDatabaseCommand extends AbstractCommand
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         // Get entity manager, question helper, subscriber service and annotation reader
-        $question  = $this->getHelper('question');
+        $question = $this->getHelper('question');
+        \assert($question instanceof QuestionHelper);
         $batchSize = $input->getArgument('batchSize');
 
         // Get list of supported encryptors
