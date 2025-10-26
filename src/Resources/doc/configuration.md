@@ -2,8 +2,12 @@
 
 All available configuration options are listed below.
 
+By default there is no configuration file created. 
+
+To make changes to the default configuration values you will need to create the yaml file config/packages/ambta_doctrine_encrypt.yaml
+
 * **encryptor_class** - Custom class for encrypting data
-    * Encryptor class, [your own encryptor class](https://github.com/DoctrineEncryptBundle/DoctrineEncryptBundle/blob/master/src/Resources/doc/custom_encryptor.md) will override encryptor paramater
+    * Encryptor class, [your own encryptor class](/src/Resources/doc/custom_encryptor.md) will override encryptor paramater
     * Encryptor must implement the Ambta\DoctrineEncryptBundle\Encryptors\EncryptorInterface interface
     * Default: Halite
 * **secret_directory_path** - Path to where the key file is stored
@@ -100,40 +104,47 @@ Due to the Doctrine Annotations [deprecation](https://www.doctrine-project.org/p
 
 Attributes are faster to read than annotations so it is definitely recommended.
 
-The default to use annotations have been kept the default as most projects are probably still using annotations and have not yet been switched to PHP attributes.
+Depending on PHP, Symfony and Doctrine ORM versions the optimal and supported readers between annotations, annotations and attibutes or just attributes are loaded automatically.
 
 ``` yaml
 services:
-    # Skip trying to read annotations. Only read attributes
-    ambta_doctrine_encrypt.orm_subscriber:
-        class: Ambta\DoctrineEncryptBundle\Subscribers\DoctrineEncryptSubscriber
-        arguments: ["@ambta_doctrine_attribute_reader", "@ambta_doctrine_encrypt.encryptor"]
-        tags:
-            -  { name: doctrine.event_subscriber }
+    ambta_doctrine_encrypt.subscriber:
+        alias: ambta_doctrine_encrypt.orm_subscriber
+
+    ambta_doctrine_encrypt.encrypt_service:
+        class: Ambta\DoctrineEncryptBundle\Service\EncryptService
+        arguments:
+            - "@doctrine.orm.entity_manager"
+            - "@ambta_doctrine_encrypt.encryptor"
+
+    Ambta\DoctrineEncryptBundle\Service\EncryptServiceAwareInterface: '@ambta_doctrine_encrypt.encrypt_service'
 
     ambta_doctrine_encrypt.command.decrypt.database:
         class: Ambta\DoctrineEncryptBundle\Command\DoctrineDecryptDatabaseCommand
         tags: ['console.command']
         arguments:
             - "@doctrine.orm.entity_manager"
-            - "@ambta_doctrine_attribute_reader"
+            - "@ambta_doctrine_annotation_reader"
             - "@ambta_doctrine_encrypt.subscriber"
+            - "@ambta_doctrine_encrypt.encrypt_service"
 
     ambta_doctrine_encrypt.command.encrypt.database:
         class: Ambta\DoctrineEncryptBundle\Command\DoctrineEncryptDatabaseCommand
         tags: ['console.command']
         arguments:
             - "@doctrine.orm.entity_manager"
-            - "@ambta_doctrine_attribute_reader"
+            - "@ambta_doctrine_annotation_reader"
             - "@ambta_doctrine_encrypt.subscriber"
+            - "@ambta_doctrine_encrypt.encrypt_service"
 
     ambta_doctrine_encrypt.command.encrypt.status:
         class: Ambta\DoctrineEncryptBundle\Command\DoctrineEncryptStatusCommand
         tags: ['console.command']
         arguments:
             - "@doctrine.orm.entity_manager"
-            - "@ambta_doctrine_attribute_reader"
+            - "@ambta_doctrine_annotation_reader"
             - "@ambta_doctrine_encrypt.subscriber"
+            - "@ambta_doctrine_encrypt.encrypt_service"
 ```
 
 ## Important!
@@ -145,4 +156,4 @@ composer require "defuse/php-encryption ^2.0"
 ## Usage
 
 Read how to use the database encryption bundle in your project.
-#### [Usage](https://github.com/DoctrineEncryptBundle/DoctrineEncryptBundle/blob/master/src/Resources/doc/usage.md)
+#### [Usage](/src/Resources/doc/usage.md)

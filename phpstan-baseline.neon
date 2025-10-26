@@ -6,56 +6,84 @@ parameters:
 			path: src/Command/AbstractCommand.php
 
 		-
-			message: "#^Class Doctrine\\\\ORM\\\\Mapping\\\\ClassMetadataInfo not found\\.$#"
+			message: "#Access to constant CHANGETRACKING_NOTIFY on an unknown class#"
 			count: 1
 			path: src/Command/DoctrineDecryptDatabaseCommand.php
 
 		-
-			message: "#^Class Doctrine\\\\ORM\\\\Mapping\\\\ClassMetadataInfo not found\\.$#"
+			message: "#Access to constant CHANGETRACKING_NOTIFY on an unknown class#"
 			count: 1
-			path: src/Command/DoctrineEncryptStatusCommand.php
+			path: src/Command/DoctrineEncryptDatabaseCommand.php
 
 		-
 			message: "#^Call to an undefined method Symfony\\\\Component\\\\Config\\\\Definition\\\\Builder\\\\NodeDefinition\\:\\:children\\(\\)\\.$#"
 			count: 1
 			path: src/DependencyInjection/Configuration.php
 
+		- 
+			message: "#^Variable \\$valueCounter might not be defined\\.$#"
+			count: 2
+			path: src/Command/*
+
+		-
+			message: "#^Call to an undefined method Doctrine\\\\DBAL\\\\Types\\\\Type\\:\\:setEncryptService\\(\\)\\.$#"
+			count: 1
+			path: src/AmbtaDoctrineEncryptBundle.php
+
+		-
+			message: "#^Call to an undefined method Doctrine\\\\DBAL\\\\Types\\\\Type\\:\\:setEntityManager\\(\\)\\.$#"
+			count: 1
+			path: src/AmbtaDoctrineEncryptBundle.php
+
+		-
+			message: "#^Call to an undefined method Doctrine\\\\DBAL\\\\Types\\\\Type\\:\\:getEncryptService\\(\\)\\.$#"
+			count: 1
+			path: src/Service/EncryptService.php
+
 		-
 			message: "#^Access to property \\$queries on an unknown class Doctrine\\\\DBAL\\\\Logging\\\\DebugStack\\.$#"
-			count: 3
 			path: tests/Functional/AbstractFunctionalTestCase.php
+
+		-
+			message: "#^Access to property \\$queries on an unknown class Doctrine\\\\DBAL\\\\Logging\\\\DebugStack\\.$#"
+			path: tests/DoctrineCompatibilityTrait.php
 
 		-
 			message: "#^Call to an undefined static method Doctrine\\\\ORM\\\\EntityManager\\:\\:create\\(\\)\\.$#"
-			count: 1
-			path: tests/Functional/AbstractFunctionalTestCase.php
+			path: tests/DoctrineCompatibilityTrait.php
 
 		-
 			message: "#^Call to static method createAnnotationMetadataConfiguration\\(\\) on an unknown class Doctrine\\\\ORM\\\\Tools\\\\Setup\\.$#"
-			count: 1
-			path: tests/Functional/AbstractFunctionalTestCase.php
+			path: tests/DoctrineCompatibilityTrait.php
 
 		-
 			message: "#^Instantiated class Doctrine\\\\DBAL\\\\Logging\\\\DebugStack not found\\.$#"
-			count: 1
-			path: tests/Functional/AbstractFunctionalTestCase.php
+			path: tests/DoctrineCompatibilityTrait.php
 
 		-
 			message: "#^Property Ambta\\\\DoctrineEncryptBundle\\\\Tests\\\\Functional\\\\AbstractFunctionalTestCase\\:\\:\\$sqlLoggerStack has unknown class Doctrine\\\\DBAL\\\\Logging\\\\DebugStack as its type\\.$#"
-			count: 1
-			path: tests/Functional/AbstractFunctionalTestCase.php
+			path: tests/DoctrineCompatibilityTrait.php
+
+		-
+			message: "#^Property Ambta\\\\DoctrineEncryptBundle\\\\Tests\\\\Unit\\\\Service\\\\DoctrineEncryptServiceTest\\:\\:\\$sqlLoggerStack has unknown class Doctrine\\\\DBAL\\\\Logging\\\\DebugStack as its type\\.$#"
+			path: tests/DoctrineCompatibilityTrait.php
 
 		-
 			message: "#^Call to an undefined method Doctrine\\\\DBAL\\\\Statement\\:\\:fetch\\(\\)\\.$#"
-			count: 1
-			path: tests/Functional/DoctrineEncryptSubscriber/AbstractDoctrineEncryptSubscriberTestCase.php
+			path: tests/DoctrineCompatibilityTrait.php
 
 		-
 			message: "#^Call to an undefined method Doctrine\\\\DBAL\\\\Statement\\:\\:fetchAll\\(\\)\\.$#"
-			count: 1
-			path: tests/Functional/DoctrineEncryptSubscriber/AbstractDoctrineEncryptSubscriberTestCase.php
+			path: tests/DoctrineCompatibilityTrait.php
 
 		-
 			message: "#^Call to private method execute\\(\\) of class Doctrine\\\\DBAL\\\\Statement\\.$#"
-			count: 2
-			path: tests/Functional/DoctrineEncryptSubscriber/AbstractDoctrineEncryptSubscriberTestCase.php
+			path: tests/DoctrineCompatibilityTrait.php
+
+		-
+			message: "#^Call to an undefined method Doctrine\\\\DBAL\\\\Types\\\\Type\\:\\:setEncryptService\\(\\)\\.$#"
+			path: tests/DoctrineCompatibilityTrait.php
+
+		-
+			message: "#^Call to an undefined method Doctrine\\\\DBAL\\\\Types\\\\Type\\:\\:setEntityManager\\(\\)\\.$#"
+			path: tests/DoctrineCompatibilityTrait.php

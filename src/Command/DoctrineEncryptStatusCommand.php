@@ -2,8 +2,6 @@
 
 namespace Ambta\DoctrineEncryptBundle\Command;
 
-use Doctrine\ORM\Mapping\ClassMetadata;
-use Doctrine\ORM\Mapping\ClassMetadataInfo;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -13,7 +11,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  * @author Marcel van Nuil <marcel@ambta.com>
  * @author Michael Feinbier <michael@feinbier.net>
  */
-class DoctrineEncryptStatusCommand extends AbstractCommand
+final class DoctrineEncryptStatusCommand extends AbstractCommand
 {
     protected function configure(): void
     {
@@ -24,30 +22,18 @@ class DoctrineEncryptStatusCommand extends AbstractCommand
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $metaDataArray = $this->entityManager->getMetadataFactory()->getAllMetadata();
+        $encryptionableEntityDetails = $this->getEncryptionableEntityDetails();
 
-        $totalCount = 0;
-        foreach ($metaDataArray as $metaData) {
-            if (($metaData instanceof ClassMetadataInfo || $metaData instanceof ClassMetadata) && $metaData->isMappedSuperclass) {
-                continue;
-            }
-
-            $count                    = 0;
-            $encryptedPropertiesCount = count($this->getEncryptionableProperties($metaData));
-            if ($encryptedPropertiesCount > 0) {
-                $totalCount += $encryptedPropertiesCount;
-                $count      += $encryptedPropertiesCount;
-            }
-
+        foreach ($encryptionableEntityDetails['propertyCountPerEntity'] as $entityName => $count) {
             if ($count > 0) {
-                $output->writeln(sprintf('<info>%s</info> has <info>%d</info> properties which are encrypted.', $metaData->name, $count));
+                $output->writeln(sprintf('<info>%s</info> has <info>%d</info> properties which are encrypted.', $entityName, $count));
             } else {
-                $output->writeln(sprintf('<info>%s</info> has no properties which are encrypted.', $metaData->name));
+                $output->writeln(sprintf('<info>%s</info> has no properties which are encrypted.', $entityName));
             }
         }
 
         $output->writeln('');
-        $output->writeln(sprintf('<info>%d</info> entities found which are containing <info>%d</info> encrypted properties.', count($metaDataArray), $totalCount));
+        $output->writeln(sprintf('<info>%d</info> entities found which contain <info>%d</info> encrypted properties.', count($encryptionableEntityDetails['metaData']), $encryptionableEntityDetails['totalPropertyCount']));
 
         return defined('AbstractCommand::SUCCESS') ? AbstractCommand::SUCCESS : 0;
     }
