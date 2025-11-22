@@ -1,6 +1,4 @@
-This demo-installation demonstrates a simple symfony 7.x-application using only attributes. 
-
-Annotations are no longer allowed in symfony 7.x
+This demo-installation demonstrates a simple symfony 7.x-application using doctrine column types.
 
 # How to use
 ```shell

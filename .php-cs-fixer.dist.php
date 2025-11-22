@@ -6,13 +6,13 @@ $finder = (new PhpCsFixer\Finder())
 ;
 
 $demoVersions = [
-    'symfony5.4',
-    'symfony5.4-types',
     'symfony6.x',
     'symfony6.x-orm3',
     'symfony6.x-types',
     'symfony7.x',
     'symfony7.x-types',
+    'symfony8.x',
+    'symfony8.x-types',
 ];
 
 foreach ($demoVersions as $demoVersion) {

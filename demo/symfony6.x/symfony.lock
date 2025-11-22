@@ -11,9 +11,6 @@
             "config/routes/annotations.yaml"
         ]
     },
-    "doctrine/cache": {
-        "version": "2.1.1"
-    },
     "doctrine/collections": {
         "version": "1.6.8"
     },
@@ -75,9 +72,6 @@
     },
     "paragonie/hidden-string": {
         "version": "v2.0.0"
-    },
-    "paragonie/random_compat": {
-        "version": "v9.99.100"
     },
     "paragonie/sodium_compat": {
         "version": "v1.17.0"
