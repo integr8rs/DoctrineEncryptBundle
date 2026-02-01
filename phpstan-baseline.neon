@@ -15,11 +15,6 @@ parameters:
 			count: 1
 			path: src/Command/DoctrineEncryptDatabaseCommand.php
 
-		-
-			message: "#^Call to an undefined method Symfony\\\\Component\\\\Config\\\\Definition\\\\Builder\\\\NodeDefinition\\:\\:children\\(\\)\\.$#"
-			count: 1
-			path: src/DependencyInjection/Configuration.php
-
 		- 
 			message: "#^Variable \\$valueCounter might not be defined\\.$#"
 			count: 2

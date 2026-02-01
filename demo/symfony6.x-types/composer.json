@@ -7,7 +7,7 @@
         "php": ">=8.1",
         "ext-ctype": "*",
         "ext-iconv": "*",
-        "doctrine/doctrine-bundle": "^2.14",
+        "doctrine/doctrine-bundle": "^2.14 || ^3.0",
         "doctrine/orm": "^2.12",
         "doctrineencryptbundle/doctrine-encrypt-bundle": "@dev",
         "symfony/console": "6.4.*",
