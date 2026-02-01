@@ -56,13 +56,13 @@ class DoctrineEncryptExtension extends Extension
             $loader->load('services_with_secret.yml');
         }
 
-        // Symfony 1-4
+        // Symfony 1-5
         // Sanity-check since this should be blocked by composer.json
-        if (Kernel::MAJOR_VERSION < 5 || (Kernel::MAJOR_VERSION === 5 && Kernel::MINOR_VERSION < 4)) {
+        if (Kernel::MAJOR_VERSION < 6 || (Kernel::MAJOR_VERSION === 6 && Kernel::MINOR_VERSION < 4)) {
             throw new \RuntimeException('doctrineencryptbundle/doctrine-encrypt-bundle expects symfony-version >= 5.4!');
         }
 
-        // Symfony 5-6
+        // Symfony 6
         if (Kernel::MAJOR_VERSION < 7) {
             // PHP 8.x (annotations and attributes)
             // Doctrine 3.0 - no annotations
@@ -71,7 +71,7 @@ class DoctrineEncryptExtension extends Extension
             } else {
                 $loader->load('services_subscriber_with_annotations_and_attributes.yml');
             }
-        // Symfony 7 (only attributes)
+        // Symfony 7-8 (only attributes)
         } else {
             $loader->load('service_listeners_with_attributes.yml');
         }
